@@ -1,0 +1,19 @@
+services:
+  auth-back:
+    build:
+      context: ./authBack
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+  sample1-back:
+    build:
+      context: ./sample1Back
+      dockerfile: Dockerfile
+    ports:
+      - 8000:8000
+  sample2-back:
+    build:
+      context: ./sample2Back
+      dockerfile: Dockerfile
+    ports:
+      - 8020:8020
