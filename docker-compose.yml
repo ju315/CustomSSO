@@ -1,19 +1,37 @@
 services:
+  auth-front:
+    build:
+      context: ./authFront
+      dockerfile: Dockerfile
+    ports:
+      - 8080:3000
   auth-back:
     build:
       context: ./authBack
       dockerfile: Dockerfile
     ports:
-      - 8080:8080
+      - 8081:8081
+  sample1-front:
+    build:
+      context: ./sample1Front
+      dockerfile: Dockerfile
+    ports:
+      - 8000:3000
   sample1-back:
     build:
       context: ./sample1Back
       dockerfile: Dockerfile
     ports:
-      - 8000:8000
+      - 8001:8001
+  sample2-front:
+    build:
+      context: ./sample2Front
+      dockerfile: Dockerfile
+    ports:
+      - 8020:3000
   sample2-back:
     build:
       context: ./sample2Back
       dockerfile: Dockerfile
     ports:
-      - 8020:8020
+      - 8021:8021

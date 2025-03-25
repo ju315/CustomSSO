@@ -4,5 +4,5 @@ WORKDIR /var/app
 COPY . .
 RUN npm install
 RUN npm run build
-EXPOSE 8020
+EXPOSE 8021
 CMD [ "node", "dist/main.js" ]
