@@ -1,37 +1,58 @@
 services:
   auth-front:
+    tty: true
     build:
       context: ./authFront
       dockerfile: Dockerfile
+    volumes:
+      - ./authFront/src:/app/src
     ports:
       - 8080:3000
   auth-back:
+    tty: true
     build:
       context: ./authBack
       dockerfile: Dockerfile
+    volumes:
+      - ./authBack:/app
+      - /app/node_modules
     ports:
-      - 8081:8081
+      - 8081:3000
   sample1-front:
+    tty: true
     build:
       context: ./sample1Front
       dockerfile: Dockerfile
+    volumes:
+      - ./sample1Front/src:/app/src
     ports:
       - 8000:3000
   sample1-back:
+    tty: true
     build:
       context: ./sample1Back
       dockerfile: Dockerfile
+    volumes:
+      - ./sample1Back:/app
+      - /app/node_modules
     ports:
-      - 8001:8001
+      - 8001:3000
   sample2-front:
+    tty: true
     build:
       context: ./sample2Front
       dockerfile: Dockerfile
+    volumes:
+      - ./sample2Front/src:/app/src
     ports:
       - 8020:3000
   sample2-back:
+    tty: true
     build:
       context: ./sample2Back
       dockerfile: Dockerfile
+    volumes:
+      - ./sample2Back:/app
+      - /app/node_modules
     ports:
-      - 8021:8021
+      - 8021:3000
