@@ -3,13 +3,16 @@ import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
 
 import App from './App';
+import { CookiesProvider } from 'react-cookie';
 
 const rootEl = document.getElementById('root') as HTMLElement;
 const root = ReactDOM.createRoot(rootEl);
 
 root.render(
   <BrowserRouter>
-    <App />
+    <CookiesProvider>
+      <App />
+    </CookiesProvider>
   </BrowserRouter>,
 );
 
