@@ -8,6 +8,8 @@ services:
       - ./authFront/src:/app/src
     ports:
       - 8080:3000
+    depends_on:
+      - auth-back
   auth-back:
     tty: true
     build:
@@ -18,25 +20,29 @@ services:
       - /app/node_modules
     ports:
       - 8081:3000
-  # sample1-front:
-  #   tty: true
-  #   build:
-  #     context: ./sample1Front
-  #     dockerfile: Dockerfile
-  #   volumes:
-  #     - ./sample1Front/src:/app/src
-  #   ports:
-  #     - 8000:3000
-  # sample1-back:
-  #   tty: true
-  #   build:
-  #     context: ./sample1Back
-  #     dockerfile: Dockerfile
-  #   volumes:
-  #     - ./sample1Back:/app
-  #     - /app/node_modules
-  #   ports:
-  #     - 8001:3000
+  sample1-front:
+    tty: true
+    build:
+      context: ./sample1Front
+      dockerfile: Dockerfile
+    volumes:
+      - ./sample1Front/src:/app/src
+    ports:
+      - 8000:3000
+    depends_on:
+      - sample1-back
+  sample1-back:
+    tty: true
+    build:
+      context: ./sample1Back
+      dockerfile: Dockerfile
+    volumes:
+      - ./sample1Back:/app
+      - /app/node_modules
+    ports:
+      - 8001:3000
+    depends_on:
+      - auth-front
   # sample2-front:
   #   tty: true
   #   build:
@@ -46,6 +52,8 @@ services:
   #     - ./sample2Front/src:/app/src
   #   ports:
   #     - 8020:3000
+  #   depends_on:
+  #     - sample2-back
   # sample2-back:
   #   tty: true
   #   build:
@@ -56,3 +64,5 @@ services:
   #     - /app/node_modules
   #   ports:
   #     - 8021:3000
+  #   depends_on:
+  #     - sample1-front
