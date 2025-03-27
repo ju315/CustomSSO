@@ -20,15 +20,12 @@ export class UserService {
       throw new HttpException('User is not exist!', 404);
     }
 
-    return this.loginUser(userDto);
+    return this.loginUser(userDto.userId);
   }
 
-  signToken(
-    userDto: { userId: string; password: string },
-    isRefreshToken: boolean,
-  ) {
+  signToken(userId: string, isRefreshToken: boolean) {
     const payload = {
-      ...userDto,
+      userId,
       type: isRefreshToken ? 'refresh' : 'access',
     };
 
@@ -38,10 +35,10 @@ export class UserService {
     });
   }
 
-  loginUser(userDto: { userId: string; password: string }) {
+  loginUser(userId: string) {
     return {
-      accessToken: this.signToken(userDto, false),
-      refreshToken: this.signToken(userDto, true),
+      accessToken: this.signToken(userId, false),
+      refreshToken: this.signToken(userId, true),
     };
   }
 
