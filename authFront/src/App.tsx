@@ -4,6 +4,7 @@ import './App.css';
 function App() {
   const [userId, setUserId] = useState('');
   const [userPw, setUserPw] = useState('');
+  const [resData, setResData] = useState<Partial<{accessToken: string, refreshToken: string}>>();
 
   return (
     <div className="App">
@@ -28,14 +29,25 @@ function App() {
                 body: JSON.stringify({
                   userId,
                   password: userPw
-                })
+                }),
+                credentials: 'include'
               })
               .then((res) => res.json())
-              .then((res) => console.log(res))
+              .then((res) => {
+                console.log(res)
+                setResData(res.data)
+              })
               .catch((res) => console.log(res))
             }}>Sign In</button>
           </div>
       </div>
+      {resData && (
+        <div>
+          <div><span>accessToken: {resData.accessToken}</span></div>
+          <div><span>refreshToken: {resData.refreshToken}</span></div>
+          <div><button>validate token</button></div>
+        </div>
+      )}
     </div>
   );
 }
