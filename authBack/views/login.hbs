@@ -1,0 +1,27 @@
+<html>
+  <head>
+    <title>sign-in</title>
+  </head>
+  <script>
+    global var returnUrl =
+    {{returnUrl}}
+    console.log(returnUrl);
+  </script>
+  <script src='../public/js/login.js'></script>
+  <body>
+    <h1>sign-in</h1>
+    <form action='/user/sign-in' method='POST'>
+      <input type='text' name='userId' placeholder='Username' required />
+      <input type='password' name='password' placeholder='Password' required />
+      <input
+        type='text'
+        value='{{returnUrl}}'
+        name='returnUrl'
+        hidden
+        required
+      />
+      <button type='submit'>Sign In</button>
+    </form>
+    <div><span>{{returnUrl}}</span></div>
+  </body>
+</html>

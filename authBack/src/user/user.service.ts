@@ -30,8 +30,7 @@ export class UserService {
     };
 
     return this.jwtService.sign(payload, {
-      secret: 'tmp',
-      expiresIn: isRefreshToken ? 3600 : 300,
+      expiresIn: isRefreshToken ? 3600 : 10,
     });
   }
 

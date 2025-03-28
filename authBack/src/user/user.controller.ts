@@ -1,6 +1,8 @@
-import { Body, Controller, Post, Res } from '@nestjs/common';
-import { UserService } from './user.service';
+import { Body, Controller, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { Response } from 'express';
+
+import { UserService } from './user.service';
+import { AuthGuard } from 'src/common/token.guard';
 
 @Controller('user')
 export class UserController {
@@ -8,16 +10,21 @@ export class UserController {
 
   @Post('sign-in')
   async userSignIn(
-    @Body() userDto: { userId: string; password: string },
+    @Body() userDto: { userId: string; password: string; returnUrl?: string },
     @Res({ passthrough: true }) res: Response,
   ) {
     console.log('body data::', userDto);
     const token = this.userService.userSignIn(userDto);
+    console.log(token);
 
-    res.cookie('token', token, {
+    res.cookie('token', JSON.stringify(token), {
       httpOnly: false,
       secure: false,
     });
+
+    if (userDto.returnUrl) {
+      return res.redirect(userDto.returnUrl);
+    }
 
     return {
       success: true,
@@ -33,5 +40,13 @@ export class UserController {
   @Post('register')
   async userRegister() {
     return this.userService.userRegister();
+  }
+
+  @UseGuards(AuthGuard)
+  @Post('validate')
+  async userValidate(@Req() req) {
+    console.log(req.user);
+
+    return req.user;
   }
 }

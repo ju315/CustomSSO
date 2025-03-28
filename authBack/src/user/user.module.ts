@@ -5,7 +5,11 @@ import { UserRepository } from './user.repository';
 import { JwtModule } from '@nestjs/jwt';
 
 @Module({
-  imports: [JwtModule.register({})],
+  imports: [
+    JwtModule.register({
+      secret: 'bjpark',
+    }),
+  ],
   controllers: [UserController],
   providers: [UserService, UserRepository],
 })
