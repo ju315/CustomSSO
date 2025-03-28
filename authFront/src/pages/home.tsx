@@ -4,7 +4,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { coldarkDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 import '../App.css';
-import { clearCookie, getCookie } from '../common/util';
+import { clearCookie, getCookie, setCookie } from '../common/util';
 
 function Home() {
   const [userId, setUserId] = useState('');
@@ -35,7 +35,54 @@ function Home() {
     }
   }, [tokenData]);
 
-  const onClickValidateBtn = () => {};
+  const onClickSignIn = () => {
+    if (!userId || !userPw) {
+      alert('enter id or password');
+      return;
+    }
+
+    fetch('http://192.168.62.13:8081/user/sign-in', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        userId,
+        password: userPw,
+      }),
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        setTokenData(res.data);
+        setCookie('token', res.data);
+        const data = jwtDecode(res.data.accessToken);
+
+        setUserData(data);
+      })
+      .catch((res) => console.log(res));
+  };
+
+  const onClickValidateBtn = () => {
+    fetch('http://192.168.62.13:8081/user/validate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        authorization: `Bearer ${tokenData.accessToken}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        if (res.statusCode === 401) {
+          alert(res.message);
+          onClickCookieClear();
+        } else {
+          alert('The token is still valid.');
+        }
+      })
+      .catch((res) => {
+        console.error(res);
+      });
+  };
 
   const onClickCookieClear = () => {
     clearCookie('token');
@@ -50,52 +97,56 @@ function Home() {
   return (
     <div>
       <div className="App">
-        <form action="">
-          <div>
-            <h1>Sign In</h1>
-          </div>
-          <div>
-            <span>id</span>
-            <input type="text" onChange={(e) => setUserId(e.target.value)} />
-          </div>
-          <div>
-            <span>password</span>
-            <input
-              type="password"
-              onChange={(e) => setUserPw(e.target.value)}
-            />
-          </div>
-          <div>
-            <button
-              onClick={async (e) => {
-                e.preventDefault();
-                fetch('http://localhost:8081/user/sign-in', {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json',
-                  },
-                  body: JSON.stringify({
-                    userId,
-                    password: userPw,
-                  }),
-                  credentials: 'include',
-                })
-                  .then((res) => res.json())
-                  .then((res) => {
-                    console.log(res);
-                    setTokenData(res.data);
-                    const data = jwtDecode(res.data.accessToken);
-                    console.log(data);
-                    console.log(typeof data);
-                    setUserData(data);
-                  })
-                  .catch((res) => console.log(res));
-              }}
-            >
-              Sign In
-            </button>
-          </div>
-        </form>
+        <div>
+          <h1>Sign In</h1>
+        </div>
+        <fieldset>
+          <form action="">
+            <table style={{ margin: 'auto' }}>
+              <tr>
+                <td>
+                  <label htmlFor="userId">ID</label>
+                </td>
+                <td>
+                  <input
+                    type="text"
+                    onChange={(e) => setUserId(e.target.value)}
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <label htmlFor="password">PASSWORD</label>
+                </td>
+                <td>
+                  <input
+                    type="password"
+                    onChange={(e) => setUserPw(e.target.value)}
+                  />
+                </td>
+              </tr>
+            </table>
+            <div style={{ marginTop: '10px' }}>
+              <button
+                style={{
+                  width: '100px',
+                  height: '30px',
+                  backgroundColor: '#5f5fff',
+                  color: 'white',
+                  cursor: 'pointer',
+                  borderRadius: '7px',
+                  borderColor: 'white',
+                }}
+                onClick={async (e) => {
+                  e.preventDefault();
+                  onClickSignIn();
+                }}
+              >
+                Sign In
+              </button>
+            </div>
+          </form>
+        </fieldset>
       </div>
       {!!tokenData.accessToken && (
         <>
@@ -125,7 +176,6 @@ function Home() {
             </div>
             <div style={{ textAlign: 'center' }}>
               <button
-                disabled
                 onClick={(e) => {
                   e.preventDefault();
                   onClickValidateBtn();
