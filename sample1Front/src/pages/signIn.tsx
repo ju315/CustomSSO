@@ -42,9 +42,9 @@ function SignIn() {
     };
   }, []);
 
-  const onClickBtn = () => {
+  const signInWithClient = () => {
     const popup = window.open(
-      'http://localhost:8080/sso/sign-in',
+      'http://192.168.62.13:8080/sso/sign-in',
       'SSO Sign-in',
       'width=800,height=600,scrollbars=yes',
     );
@@ -55,7 +55,43 @@ function SignIn() {
     }
   };
 
-  const onClickValidateBtn = () => {};
+  const signInWithServer = () => {
+    const home = 'http://192.168.62.13:8000/sign-in';
+    // fetch(
+    //   `http://192.168.62.13:8081/view/sign-in?returnUrl=${encodeURIComponent(
+    //     home,
+    //   )}`,
+    //   {
+    //     method: 'GET',
+    //   },
+    // );
+
+    window.location.href = `http://192.168.62.13:8081/view/sign-in?returnUrl=${encodeURIComponent(
+      home,
+    )}`;
+  };
+
+  const onClickValidateBtn = () => {
+    fetch('http://192.168.62.13:8081/user/validate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        authorization: `Bearer ${tokenData.accessToken}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        if (res.statusCode === 401) {
+          alert(res.message);
+          onClickCookieClear();
+        } else {
+          alert('The token is still valid.');
+        }
+      })
+      .catch((res) => {
+        console.error(res);
+      });
+  };
 
   const onClickCookieClear = () => {
     clearCookie('token');
@@ -71,14 +107,42 @@ function SignIn() {
     <div>
       <div className="App">
         <h1>SSO Sign-in</h1>
-        <div>
+        <div style={{ marginBottom: '5px' }}>
           <button
+            style={{
+              width: '100%',
+              height: '50px',
+              backgroundColor: '#00afff',
+              color: 'white',
+              cursor: 'pointer',
+              borderRadius: '7px',
+              borderColor: 'white',
+            }}
             onClick={(e) => {
               e.preventDefault();
-              onClickBtn();
+              signInWithClient();
             }}
           >
-            SSO Sign-in
+            SSO Sign-in(w. Auth Client)
+          </button>
+        </div>
+        <div>
+          <button
+            style={{
+              width: '100%',
+              height: '50px',
+              backgroundColor: '#5f5fff',
+              color: 'white',
+              cursor: 'pointer',
+              borderRadius: '7px',
+              borderColor: 'white',
+            }}
+            onClick={(e) => {
+              e.preventDefault();
+              signInWithServer();
+            }}
+          >
+            SSO sign-in(w. Auth Server)
           </button>
         </div>
       </div>
@@ -110,7 +174,6 @@ function SignIn() {
             </div>
             <div style={{ textAlign: 'center' }}>
               <button
-                disabled
                 onClick={(e) => {
                   e.preventDefault();
                   onClickValidateBtn();
