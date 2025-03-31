@@ -1,10 +1,7 @@
 import { useEffect, useState } from 'react';
-import { jwtDecode } from 'jwt-decode';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { coldarkDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 import '../App.css';
-import { clearCookie, getCookie, setCookie } from '../common/util';
+import { getCookie, setCookie } from '../common/util';
 import ViewTokenData from '../components/viewToken';
 
 function SignIn() {
@@ -12,7 +9,6 @@ function SignIn() {
     accessToken: string;
     refreshToken: string;
   }>({ accessToken: '', refreshToken: '' });
-  const [userData, setUserData] = useState<any>(null);
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
@@ -22,10 +18,6 @@ function SignIn() {
         const cookieData = event.data.cookie;
         setTokenData(cookieData);
         setCookie('token', JSON.stringify(cookieData));
-        const data = jwtDecode(cookieData.accessToken);
-        console.log(data);
-        console.log(typeof data);
-        setUserData(data);
       }
     };
 
@@ -35,7 +27,6 @@ function SignIn() {
     console.log(jwtData);
     if (jwtData?.accessToken) {
       setTokenData(jwtData);
-      setUserData(jwtDecode(jwtData.accessToken));
     }
 
     return () => {
