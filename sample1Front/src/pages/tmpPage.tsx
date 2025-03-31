@@ -1,11 +1,14 @@
+import { jwtDecode } from 'jwt-decode';
 import { useEffect, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { coldarkDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import { jwtDecode } from 'jwt-decode';
+import { setCookie } from '../common/util';
 
-import { clearCookie, getCookie } from '../common/util';
+const TmpPage = () => {
+  const [query] = useSearchParams();
+  const navigate = useNavigate();
 
-const Home = () => {
   const [tokenData, setTokenData] = useState({
     accessToken: '',
     refreshToken: '',
@@ -13,50 +16,38 @@ const Home = () => {
   const [userData, setUserData] = useState<any>();
 
   useEffect(() => {
-    const cookie = getCookie('token');
-    if (cookie) {
-      setTokenData(cookie);
-      setUserData(jwtDecode(cookie.accessToken));
+    console.log(query.get('accessToken'));
+    console.log(query.get('refreshToken'));
+
+    const at = query.get('accessToken');
+    const rt = query.get('refreshToken');
+
+    if (at && rt) {
+      setCookie(
+        'token',
+        JSON.stringify({
+          accessToken: at,
+          refreshToken: rt,
+        }),
+      );
+
+      setTokenData({
+        accessToken: at,
+        refreshToken: rt,
+      });
+
+      const data = jwtDecode(at);
+      setUserData(data);
     }
   }, []);
 
-  const onClickValidateBtn = () => {
-    fetch('http://192.168.62.13:8081/user/validate', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        authorization: `Bearer ${tokenData.accessToken}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((res) => {
-        if (res.statusCode === 401) {
-          alert(res.message);
-          onClickCookieClear();
-        } else {
-          alert('The token is still valid.');
-        }
-      })
-      .catch((res) => {
-        console.error(res);
-      });
-  };
-
-  const onClickCookieClear = () => {
-    clearCookie('token');
-
-    setUserData(null);
-    setTokenData({
-      accessToken: '',
-      refreshToken: '',
-    });
+  const goHome = () => {
+    navigate('/');
   };
 
   return (
     <>
-      <div>
-        <h1>Home</h1>
-      </div>
+      <h1>Temporary Page</h1>
       {!!tokenData.accessToken && (
         <>
           <hr />
@@ -83,22 +74,14 @@ const Home = () => {
                 </SyntaxHighlighter>
               </div>
             </div>
-            <div style={{ textAlign: 'center' }}>
+            <div>
               <button
                 onClick={(e) => {
                   e.preventDefault();
-                  onClickValidateBtn();
+                  goHome();
                 }}
               >
-                validate token
-              </button>
-              <button
-                onClick={(e) => {
-                  e.preventDefault();
-                  onClickCookieClear();
-                }}
-              >
-                clear cookie
+                go home
               </button>
             </div>
           </div>
@@ -108,4 +91,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default TmpPage;

@@ -56,7 +56,7 @@ function SignIn() {
   };
 
   const signInWithServer = () => {
-    const home = window.location.href;
+    const returnUrl = `${origin}/tmp-page`;
     // fetch(
     //   `http://192.168.62.13:8081/view/sign-in?returnUrl=${encodeURIComponent(
     //     home,
@@ -67,7 +67,7 @@ function SignIn() {
     // );
 
     window.location.href = `http://192.168.62.13:8081/view/check?returnUrl=${encodeURIComponent(
-      home,
+      returnUrl,
     )}`;
   };
 
