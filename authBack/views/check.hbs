@@ -1,0 +1,30 @@
+<html>
+  <head>
+    <title>check...</title>
+  </head>
+  <body>
+    <h1>check cookie...</h1>
+    <script>
+      const cookie = document.cookie;
+      const token = cookie .split('; ')
+        .find((x) => x.includes('token'));
+
+      const returnUrl = decodeURIComponent('{{{returnUrl}}}');
+      console.log('token:: ', token);
+      console.log('url:: ', returnUrl);
+      if (token) {
+        {{!-- token이 있는 경우 토큰 데이터와 함께 본래 URL로 복귀. --}}
+        const [name, data] = token.split('=');
+        const tokenData = JSON.parse(decodeURIComponent(data));
+        console.log('token data:: ', tokenData);
+
+        window.location.href = returnUrl + '?accessToken=' + tokenData.accessToken + '&refreshToken=' + tokenData.refreshToken;
+      } else {
+        {{!-- TOKEN이 없는 경우 로그인 페이지로 이동. --}}
+        const href = `/view/sign-in?return-url=${returnUrl}`;
+        console.log(href);
+        window.location.href = `/view/sign-in?returnUrl=${returnUrl}`;
+      }
+    </script>
+  </body>
+</html>

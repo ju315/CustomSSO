@@ -23,7 +23,13 @@ export class UserController {
     });
 
     if (userDto.returnUrl) {
-      return res.redirect(userDto.returnUrl);
+      const redirectUrl =
+        userDto.returnUrl +
+        '?accessToken=' +
+        token.accessToken +
+        '&refreshToken=' +
+        token.refreshToken;
+      return res.redirect(redirectUrl);
     }
 
     return {

@@ -6,6 +6,14 @@ export class ViewController {
     //
   }
 
+  @Get('check')
+  @Render('check')
+  viewCheckCookie(@Query('returnUrl') returnUrl: string) {
+    console.log(returnUrl);
+
+    return { returnUrl };
+  }
+
   @Get('sign-in')
   @Render('login')
   viewSignIn(@Query() queryData: any) {
