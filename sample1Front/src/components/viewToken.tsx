@@ -31,7 +31,6 @@ const ViewTokenData = ({ tokenData, setTokenData, children }: props) => {
       .then((res) => {
         if (res.statusCode === 401) {
           alert(res.message);
-          onClickCookieClear();
         } else {
           alert('The token is still valid.');
         }
@@ -50,6 +49,12 @@ const ViewTokenData = ({ tokenData, setTokenData, children }: props) => {
       refreshToken: '',
     });
     navigator('/sign-in');
+  };
+
+  const onClickSingOut = () => {
+    clearCookie('token');
+
+    window.location.reload();
   };
 
   return (
@@ -94,6 +99,18 @@ const ViewTokenData = ({ tokenData, setTokenData, children }: props) => {
             }}
           >
             clear cookie
+          </button>
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              const confirm = window.confirm('Really Sign out?');
+
+              if (confirm) {
+                onClickSingOut();
+              }
+            }}
+          >
+            sign-out
           </button>
           {children}
         </div>

@@ -46,7 +46,7 @@ const Home = () => {
               borderColor: 'white',
             }}
           >
-            sing in
+            sign in
           </button>
         </div>
       )}
