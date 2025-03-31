@@ -57,19 +57,10 @@ function SignIn() {
   };
 
   const signInWithServer = () => {
-    const returnUrl = `${origin}/tmp-page`;
-    // fetch(
-    //   `http://192.168.62.13:8081/view/sign-in?returnUrl=${encodeURIComponent(
-    //     home,
-    //   )}`,
-    //   {
-    //     method: 'GET',
-    //   },
-    // );
+    const returnUrl = encodeURIComponent(`${window.location.origin}/tmp-page`);
+    console.log('return url:: ', returnUrl);
 
-    window.location.href = `http://192.168.62.13:8081/view/check?returnUrl=${encodeURIComponent(
-      returnUrl,
-    )}`;
+    window.location.href = `http://192.168.62.13:8081/view/check?returnUrl=${returnUrl}`;
   };
 
   return (

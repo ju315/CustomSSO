@@ -54,7 +54,8 @@ const ViewTokenData = ({ tokenData, setTokenData, children }: props) => {
   const onClickSingOut = () => {
     clearCookie('token');
 
-    window.location.reload();
+    const returnUrl = encodeURIComponent(window.location.origin);
+    window.location.href = `http://192.168.62.13:8081/view/sign-out?returnUrl=${returnUrl}`;
   };
 
   return (
