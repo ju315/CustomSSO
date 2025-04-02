@@ -14,8 +14,9 @@ function App() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (cookie && apiVersion === '2') {
+    if (cookie && apiVersion === 2) {
       const at = jwtDecode(cookie.accessToken);
+
       fetch(
         `http://192.168.62.13:8081/api/v2/user/check-sign-in?s=${at.uuid}`,
         {
