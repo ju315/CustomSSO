@@ -1,0 +1,19 @@
+<html>
+  <head>
+    <title>sign-in</title>
+  </head>
+  <body>
+    <h1>sign out</h1>
+    <h3>clear cookie...</h3>
+  </body>
+  <script>
+    const cookie = document.cookie;
+    const token = cookie.split('; ').find((x) => x.includes('token'));
+
+    if (token) {
+      document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    } else {
+      window.location.href = '{{returnUrl}}';
+    }
+  </script>
+</html>

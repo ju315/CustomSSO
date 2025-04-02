@@ -1,4 +1,14 @@
-import { Body, Controller, Post, Req, Res, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Headers,
+  Post,
+  Req,
+  Res,
+  UnauthorizedException,
+  UseGuards,
+  Version,
+} from '@nestjs/common';
 import { Response } from 'express';
 
 import { UserService } from './user.service';
@@ -8,6 +18,7 @@ import { AuthGuard } from 'src/common/token.guard';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @Version('1')
   @Post('sign-in')
   async userSignIn(
     @Body() userDto: { userId: string; password: string; returnUrl?: string },
@@ -38,6 +49,15 @@ export class UserController {
     };
   }
 
+  @Version('2')
+  @Post('sign-in')
+  async userSignInV2(
+    @Body() userDto: { userId: string; password: string; returnUrl?: string },
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    return null;
+  }
+
   @Post('sign-out')
   async userSignOut() {
     return this.userService.userSignOut();
@@ -54,5 +74,20 @@ export class UserController {
     console.log(req.user);
 
     return req.user;
+  }
+
+  @Post('new-token')
+  async getNewToken(@Headers('authorization') rawToken: string) {
+    const splitToken = rawToken.split(' ');
+
+    if (splitToken.length !== 2) {
+      throw new UnauthorizedException('잘못된 토큰입니다!');
+    }
+
+    const refreshToken = splitToken[1];
+
+    const token = await this.userService.newAccessToken(refreshToken);
+
+    return token;
   }
 }

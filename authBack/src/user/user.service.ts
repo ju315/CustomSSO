@@ -1,4 +1,8 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
 import { UserRepository } from './user.repository';
@@ -47,5 +51,21 @@ export class UserService {
 
   userRegister() {
     return 'user register';
+  }
+
+  newAccessToken(refreshToken: string) {
+    try {
+      // Refresh Token 검증
+      const decoded = this.jwtService.verify(refreshToken, {
+        secret: 'bjpark',
+      });
+
+      // 새로운 Access Token 발급
+      const newAccessToken = this.signToken(decoded.userId, false);
+
+      return { accessToken: newAccessToken };
+    } catch (error) {
+      throw new UnauthorizedException('Refresh Token이 유효하지 않습니다.');
+    }
   }
 }

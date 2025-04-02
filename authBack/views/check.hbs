@@ -9,21 +9,19 @@
       const token = cookie .split('; ')
         .find((x) => x.includes('token'));
 
-      const returnUrl = decodeURIComponent('{{{returnUrl}}}');
-      console.log('token:: ', token);
-      console.log('url:: ', returnUrl);
+      const returnUrl = '{{{returnUrl}}}';
+      const version = '{{{version}}}'
       if (token) {
         {{!-- token이 있는 경우 토큰 데이터와 함께 본래 URL로 복귀. --}}
         const [name, data] = token.split('=');
         const tokenData = JSON.parse(decodeURIComponent(data));
-        console.log('token data:: ', tokenData);
 
         window.location.href = returnUrl + '?accessToken=' + tokenData.accessToken + '&refreshToken=' + tokenData.refreshToken;
       } else {
         {{!-- TOKEN이 없는 경우 로그인 페이지로 이동. --}}
-        const href = `/view/sign-in?return-url=${returnUrl}`;
-        console.log(href);
-        window.location.href = `/view/sign-in?returnUrl=${returnUrl}`;
+        const href = `/api/view/sign-in?return-url=${returnUrl}`;
+
+        window.location.href = `/api/view/sign-in?returnUrl=${returnUrl}&v=${version}`;
       }
     </script>
   </body>

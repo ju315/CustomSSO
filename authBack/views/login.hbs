@@ -2,15 +2,9 @@
   <head>
     <title>sign-in</title>
   </head>
-  <script>
-    global var returnUrl =
-    {{returnUrl}}
-    console.log(returnUrl);
-  </script>
-  <script src='../public/js/login.js'></script>
   <body>
     <h1>sign-in</h1>
-    <form action='/user/sign-in' method='POST'>
+    <form id="sign-in-form" method='POST'>
       <input type='text' name='userId' placeholder='Username' required />
       <input type='password' name='password' placeholder='Password' required />
       <input
@@ -20,8 +14,25 @@
         hidden
         required
       />
-      <button type='submit'>Sign In</button>
+      <button type='submit' onClick="updateAction(event)">Sign In</button>
     </form>
     <div><span>{{returnUrl}}</span></div>
+    <div><span>{{version}}</span></div>
+    <script>
+      const version = '{{{version}}}'
+      function updateAction(event) {
+        event.preventDefault();
+
+        const form = document.getElementById('sign-in-form');
+
+        if (version === '1') {
+          form.action = '/api/v1/user/sign-in'
+        } else {
+          form.action = '/api/v2/user/sign-in'
+        }
+
+        form.submit();
+      }
+    </script>
   </body>
 </html>
