@@ -68,6 +68,7 @@ export class UserController {
     return this.userService.userRegister();
   }
 
+  @Version('1')
   @UseGuards(AuthGuard)
   @Post('validate')
   async userValidate(@Req() req) {
@@ -76,6 +77,7 @@ export class UserController {
     return req.user;
   }
 
+  @Version('1')
   @Post('new-token')
   async getNewToken(@Headers('authorization') rawToken: string) {
     const splitToken = rawToken.split(' ');
