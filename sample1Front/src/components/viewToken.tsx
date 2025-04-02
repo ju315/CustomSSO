@@ -87,10 +87,10 @@ const ViewTokenData = ({ tokenData, setTokenData, children }: props) => {
     clearCookie('token');
 
     const returnUrl = encodeURIComponent(window.location.origin);
-    let hrefUrl = `http://192.168.62.13:8081/api/v${apiVersion}/view/sign-out?returnUrl=${returnUrl}`;
+    let hrefUrl = `http://192.168.62.13:8081/api/v${apiVersion}/view/sign-out?r=${returnUrl}`;
 
     if (apiVersion === 2) {
-      hrefUrl += `&s=${userData.uuid}`;
+      hrefUrl += `&u=${userData.uuid}`;
     }
 
     window.location.href = hrefUrl;

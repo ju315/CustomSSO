@@ -14,11 +14,8 @@ const TmpPage = () => {
   });
 
   useEffect(() => {
-    console.log(query.get('accessToken'));
-    console.log(query.get('refreshToken'));
-
-    const at = query.get('accessToken');
-    const rt = query.get('refreshToken');
+    const at = query.get('at');
+    const rt = query.get('rt');
 
     if (at && rt) {
       setCookie(

@@ -6,8 +6,8 @@
     <h1>check cookie...</h1>
     <script>
       const cookie = document.cookie;
-      const returnUrl = '{{{returnUrl}}}';
-      const version = '{{{version}}}'
+      const returnUrl = '{{{r}}}';
+      const version = '{{{v}}}'
 
       const token = cookie .split('; ')
         .find((x) => x.includes('token'));
@@ -17,12 +17,12 @@
         const [name, data] = token.split('=');
         const tokenData = JSON.parse(decodeURIComponent(data));
 
-        window.location.href = returnUrl + '?accessToken=' + tokenData.accessToken + '&refreshToken=' + tokenData.refreshToken;
+        window.location.href = returnUrl + '?at=' + tokenData.accessToken + '&rt=' + tokenData.refreshToken;
       } else {
         {{!-- TOKEN이 없는 경우 로그인 페이지로 이동. --}}
-        const href = `/api/v1/view/sign-in?return-url=${returnUrl}`;
+        const href = `/api/v1/view/sign-in?r=${returnUrl}`;
 
-        window.location.href = `/api/v1/view/sign-in?returnUrl=${returnUrl}&v=${version}`;
+        window.location.href = `/api/v1/view/sign-in?r=${returnUrl}&v=${version}`;
       }
     </script>
   </body>

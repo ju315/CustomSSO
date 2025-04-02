@@ -49,7 +49,7 @@ function SignIn() {
 
   const signInWithServer = (v: number) => {
     const returnUrl = encodeURI(`${window.location.origin}/tmp-page`);
-    window.location.href = `http://192.168.62.13:8081/api/v1/view/check?v=${v}&returnUrl=${returnUrl}`;
+    window.location.href = `http://192.168.62.13:8081/api/v1/view/check?v=${v}&r=${returnUrl}`;
   };
 
   return (

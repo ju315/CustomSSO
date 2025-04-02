@@ -9,17 +9,17 @@
       <input type='password' name='password' placeholder='Password' required />
       <input
         type='text'
-        value='{{returnUrl}}'
+        value='{{r}}'
         name='returnUrl'
         hidden
         required
       />
       <button type='submit' onClick="updateAction(event)">Sign In</button>
     </form>
-    <div><span>return url: {{returnUrl}}</span></div>
-    <div><span>api version: {{version}}</span></div>
+    <div><span>return url: {{r}}</span></div>
+    <div><span>api version: {{v}}</span></div>
     <script>
-      const version = '{{{version}}}'
+      const version = '{{{v}}}'
       function updateAction(event) {
         event.preventDefault();
 

@@ -28,9 +28,7 @@ export class UserController {
     @Body() userDto: { userId: string; password: string; returnUrl?: string },
     @Res({ passthrough: true }) res: Response,
   ) {
-    console.log('body data::', userDto);
     const token = this.userService.userSignIn(userDto);
-    console.log(token);
 
     res.cookie('token', JSON.stringify(token), {
       httpOnly: false,
@@ -40,9 +38,9 @@ export class UserController {
     if (userDto.returnUrl) {
       const redirectUrl =
         userDto.returnUrl +
-        '?accessToken=' +
+        '?at=' +
         token.accessToken +
-        '&refreshToken=' +
+        '&rt=' +
         token.refreshToken;
       return res.redirect(redirectUrl);
     }
@@ -71,9 +69,9 @@ export class UserController {
     if (userDto.returnUrl) {
       const redirectUrl =
         userDto.returnUrl +
-        '?accessToken=' +
+        '?at=' +
         token.accessToken +
-        '&refreshToken=' +
+        '&rt=' +
         token.refreshToken;
       return res.redirect(redirectUrl);
     }

@@ -11,41 +11,34 @@ export class ViewController {
   @Version('1')
   @Get('check')
   @Render('check')
-  viewCheckCookie(
-    @Query('returnUrl') returnUrl: string,
-    @Query('v') version: string,
-  ) {
-    return { returnUrl, version };
+  viewCheckCookie(@Query('r') r: string, @Query('v') v: string) {
+    return { r, v };
   }
 
   @Version('1')
   @Get('sign-in')
   @Render('login')
   viewSignIn(
-    @Query('returnUrl') returnUrl: string,
-    @Query('v') version: string,
+    @Query('r') r: string,
+    @Query('v') v: string,
     @Req() req: Request,
   ) {
-    return { returnUrl: decodeURIComponent(returnUrl), version };
+    return { r: decodeURIComponent(r), v };
   }
 
   @Version('1')
   @Get('sign-out')
   @Render('signOut')
-  viewSignOut(@Query('returnUrl') returnUrl: string, @Req() req: Request) {
-    return { returnUrl: decodeURIComponent(returnUrl) };
+  viewSignOut(@Query('r') r: string, @Req() req: Request) {
+    return { r: decodeURIComponent(r) };
   }
 
   @Version('2')
   @Get('sign-out')
   @Render('signOut')
-  async viewSignOutV2(
-    @Query('returnUrl') returnUrl: string,
-    @Query('s') sessionId: string,
-  ) {
-    console.log(sessionId);
-    await this.userService.updateSingInStateInDB(sessionId);
+  async viewSignOutV2(@Query('r') r: string, @Query('u') uuid: string) {
+    await this.userService.updateSingInStateInDB(uuid);
 
-    return { returnUrl: decodeURIComponent(returnUrl) };
+    return { r: decodeURIComponent(r) };
   }
 }

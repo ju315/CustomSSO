@@ -19,7 +19,7 @@ function App() {
       const at = jwtDecode(cookie.accessToken) as TokenData;
 
       fetch(
-        `http://192.168.62.13:8081/api/v2/user/check-sign-in?s=${at.uuid}`,
+        `http://192.168.62.13:8081/api/v2/user/check-sign-in?u=${at.uuid}`,
         {
           method: 'GET',
         },
