@@ -8,7 +8,12 @@ import { clearCookie } from '../common/util';
 
 interface props {
   tokenData: { accessToken: string; refreshToken: string };
-  setTokenData: any;
+  setTokenData: React.Dispatch<
+    React.SetStateAction<{
+      accessToken: string;
+      refreshToken: string;
+    }>
+  >;
   children?: ReactNode;
 }
 const ViewTokenData = ({ tokenData, setTokenData, children }: props) => {
@@ -19,8 +24,28 @@ const ViewTokenData = ({ tokenData, setTokenData, children }: props) => {
     setUserData(jwtDecode(tokenData.accessToken));
   }, []);
 
+  const getNewAccessToken = () => {
+    fetch('http://192.168.62.13:8081/api/v1/user/new-token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        authorization: `Bearer ${tokenData.refreshToken}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        setTokenData({
+          ...tokenData,
+          accessToken: res.accessToken,
+        });
+
+        setUserData(jwtDecode(res.accessToken));
+      })
+      .catch((err) => console.error(err));
+  };
+
   const onClickValidateBtn = () => {
-    fetch('http://192.168.62.13:8081/user/validate', {
+    fetch('http://192.168.62.13:8081/api/v1/user/validate', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -31,6 +56,12 @@ const ViewTokenData = ({ tokenData, setTokenData, children }: props) => {
       .then((res) => {
         if (res.statusCode === 401) {
           alert(res.message);
+
+          const confirm = window.confirm('Get new access token?');
+
+          if (confirm) {
+            getNewAccessToken();
+          }
         } else {
           alert('The token is still valid.');
         }
@@ -55,7 +86,7 @@ const ViewTokenData = ({ tokenData, setTokenData, children }: props) => {
     clearCookie('token');
 
     const returnUrl = encodeURIComponent(window.location.origin);
-    window.location.href = `http://192.168.62.13:8081/view/sign-out?returnUrl=${returnUrl}`;
+    window.location.href = `http://192.168.62.13:8081/api/v1/view/sign-out?returnUrl=${returnUrl}`;
   };
 
   return (

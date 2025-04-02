@@ -36,7 +36,7 @@ function SignIn() {
 
   const signInWithClient = () => {
     const popup = window.open(
-      'http://192.168.62.13:8080/sso/sign-in',
+      'http://192.168.62.13:8080/api/v1/sso/sign-in',
       'SSO Sign-in',
       'width=800,height=600,scrollbars=yes',
     );
@@ -51,14 +51,14 @@ function SignIn() {
     const returnUrl = encodeURIComponent(`${window.location.origin}/tmp-page`);
     console.log('return url:: ', returnUrl);
 
-    window.location.href = `http://192.168.62.13:8081/view/check?returnUrl=${returnUrl}`;
+    window.location.href = `http://192.168.62.13:8081/api/v1/view/check?v=1&returnUrl=${returnUrl}`;
   };
 
   return (
     <div>
       <div className="App">
         <h1>SSO Sign-in</h1>
-        <div style={{ marginBottom: '5px' }}>
+        {/* <div style={{ marginBottom: '5px' }}>
           <button
             style={{
               width: '100%',
@@ -76,7 +76,7 @@ function SignIn() {
           >
             SSO Sign-in(w. Auth Client)
           </button>
-        </div>
+        </div> */}
         <div>
           <button
             style={{
