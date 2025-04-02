@@ -139,7 +139,7 @@ export class UserService {
     }
   }
 
-  async getSingInState(sessionId: string) {
+  async getSignInState(sessionId: string) {
     const value = await this.signInHistory.findOne({
       where: { sessionId },
     });

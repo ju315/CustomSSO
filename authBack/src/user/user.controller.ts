@@ -87,7 +87,7 @@ export class UserController {
   @Version('2')
   @Get('check-sign-in')
   async checkSignInState(@Query('s') sessionId: string) {
-    const res = await this.userService.getSingInState(sessionId);
+    const res = await this.userService.getSignInState(sessionId);
 
     return res;
   }
