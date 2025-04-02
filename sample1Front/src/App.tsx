@@ -1,11 +1,12 @@
 import { useEffect } from 'react';
 import { Route, Routes, useNavigate } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
 
 import Home from './pages/home';
 import SignIn from './pages/signIn';
 import TmpPage from './pages/tmpPage';
 import { clearCookie, getCookie } from './common/util';
-import { jwtDecode } from 'jwt-decode';
+import { TokenData } from './common/type/index';
 
 function App() {
   const cookie = getCookie('token');
@@ -15,7 +16,7 @@ function App() {
 
   useEffect(() => {
     if (cookie && apiVersion === 2) {
-      const at = jwtDecode(cookie.accessToken);
+      const at = jwtDecode(cookie.accessToken) as TokenData;
 
       fetch(
         `http://192.168.62.13:8081/api/v2/user/check-sign-in?s=${at.uuid}`,
@@ -36,6 +37,7 @@ function App() {
         .catch((err) => console.log(err));
     }
   }, []);
+
   return (
     <Routes>
       <Route path="/" element={<Home />} />
