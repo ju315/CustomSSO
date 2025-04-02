@@ -116,18 +116,27 @@ export class UserService {
   }
 
   async updateSingInStateInDB(sessionId) {
-    const value = await this.signInHistory.findOne({
-      where: { sessionId, isSignIn: true },
-    });
+    try {
+      const value = await this.signInHistory.findOne({
+        where: { sessionId, isSignIn: true },
+      });
 
-    const newValue = {
-      ...value,
-      isSignIn: false,
-    };
+      if (!value) {
+        return true;
+      }
 
-    const res = await this.signInHistory.save(newValue);
+      const newValue = {
+        ...value,
+        isSignIn: false,
+      };
 
-    return res;
+      const res = await this.signInHistory.save(newValue);
+
+      return res;
+    } catch (err) {
+      console.log(err);
+      throw new HttpException('something send wrong...', 400);
+    }
   }
 
   async getSingInState(sessionId: string) {
