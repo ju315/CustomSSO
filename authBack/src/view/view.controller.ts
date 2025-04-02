@@ -1,9 +1,10 @@
 import { Controller, Get, Query, Render, Req, Version } from '@nestjs/common';
 import { Request } from 'express';
+import { UserService } from 'src/user/user.service';
 
 @Controller('view')
 export class ViewController {
-  constructor() {
+  constructor(private readonly userService: UserService) {
     //
   }
 
@@ -32,6 +33,19 @@ export class ViewController {
   @Get('sign-out')
   @Render('signOut')
   viewSignOut(@Query('returnUrl') returnUrl: string, @Req() req: Request) {
+    return { returnUrl: decodeURIComponent(returnUrl) };
+  }
+
+  @Version('2')
+  @Get('sign-out')
+  @Render('signOut')
+  async viewSignOutV2(
+    @Query('returnUrl') returnUrl: string,
+    @Query('s') sessionId: string,
+  ) {
+    console.log(sessionId);
+    await this.userService.updateSingInStateInDB(sessionId);
+
     return { returnUrl: decodeURIComponent(returnUrl) };
   }
 }

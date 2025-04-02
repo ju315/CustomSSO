@@ -6,11 +6,12 @@
     <h1>check cookie...</h1>
     <script>
       const cookie = document.cookie;
+      const returnUrl = '{{{returnUrl}}}';
+      const version = '{{{version}}}'
+
       const token = cookie .split('; ')
         .find((x) => x.includes('token'));
 
-      const returnUrl = '{{{returnUrl}}}';
-      const version = '{{{version}}}'
       if (token) {
         {{!-- token이 있는 경우 토큰 데이터와 함께 본래 URL로 복귀. --}}
         const [name, data] = token.split('=');

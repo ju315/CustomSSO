@@ -1,18 +1,22 @@
 import {
   Body,
   Controller,
+  Get,
   Headers,
+  Ip,
   Post,
+  Query,
   Req,
   Res,
   UnauthorizedException,
   UseGuards,
   Version,
 } from '@nestjs/common';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 
 import { UserService } from './user.service';
 import { AuthGuard } from 'src/common/token.guard';
+import { getRealIp } from 'src/common/util';
 
 @Controller('user')
 export class UserController {
@@ -52,10 +56,40 @@ export class UserController {
   @Version('2')
   @Post('sign-in')
   async userSignInV2(
+    @Req() req: Request,
     @Body() userDto: { userId: string; password: string; returnUrl?: string },
+    @Ip() ip: string,
     @Res({ passthrough: true }) res: Response,
   ) {
-    return null;
+    const token = await this.userService.userSignInV2(userDto, getRealIp(req));
+
+    res.cookie('token', JSON.stringify(token), {
+      httpOnly: false,
+      secure: false,
+    });
+
+    if (userDto.returnUrl) {
+      const redirectUrl =
+        userDto.returnUrl +
+        '?accessToken=' +
+        token.accessToken +
+        '&refreshToken=' +
+        token.refreshToken;
+      return res.redirect(redirectUrl);
+    }
+
+    return {
+      success: true,
+      data: token,
+    };
+  }
+
+  @Version('2')
+  @Get('check-sign-in')
+  async checkSignInState(@Query('s') sessionId: string) {
+    const res = await this.userService.getSingInState(sessionId);
+
+    return res;
   }
 
   @Post('sign-out')
