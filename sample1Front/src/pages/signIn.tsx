@@ -93,7 +93,7 @@ function SignIn() {
               signInWithServer();
             }}
           >
-            SSO sign-in(w. Auth Server)
+            SSO sign-in(w. JWT)
           </button>
         </div>
       </div>
