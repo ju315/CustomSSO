@@ -4,7 +4,7 @@ import { jwtDecode } from 'jwt-decode';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { coldarkDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
-import { clearCookie } from '../common/util';
+import { clearCookie, getCookie } from '../common/util';
 
 interface props {
   tokenData: { accessToken: string; refreshToken: string };
@@ -18,6 +18,7 @@ interface props {
 }
 const ViewTokenData = ({ tokenData, setTokenData, children }: props) => {
   const navigator = useNavigate();
+  const apiVersion = getCookie('apiVersion');
   const [userData, setUserData] = useState<any>(null);
 
   useEffect(() => {
@@ -86,13 +87,22 @@ const ViewTokenData = ({ tokenData, setTokenData, children }: props) => {
     clearCookie('token');
 
     const returnUrl = encodeURIComponent(window.location.origin);
-    window.location.href = `http://192.168.62.13:8081/api/v1/view/sign-out?returnUrl=${returnUrl}`;
+    let hrefUrl = `http://192.168.62.13:8081/api/v${apiVersion}/view/sign-out?returnUrl=${returnUrl}`;
+
+    if (apiVersion === 2) {
+      hrefUrl += `&s=${userData.uuid}`;
+    }
+
+    window.location.href = hrefUrl;
   };
 
   return (
     <>
       <hr />
       <div>
+        <div>
+          <h2>api version: {apiVersion}</h2>
+        </div>
         <div>
           <span style={{ textAlign: 'left' }}>accessToken</span>
           <div>

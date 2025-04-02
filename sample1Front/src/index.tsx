@@ -1,9 +1,9 @@
 import ReactDOM from 'react-dom/client';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
+import { CookiesProvider } from 'react-cookie';
 
 import App from './App';
-import { CookiesProvider } from 'react-cookie';
 
 const rootEl = document.getElementById('root') as HTMLElement;
 const root = ReactDOM.createRoot(rootEl);

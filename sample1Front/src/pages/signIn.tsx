@@ -47,11 +47,9 @@ function SignIn() {
     }
   };
 
-  const signInWithServer = () => {
-    const returnUrl = encodeURIComponent(`${window.location.origin}/tmp-page`);
-    console.log('return url:: ', returnUrl);
-
-    window.location.href = `http://192.168.62.13:8081/api/v1/view/check?v=1&returnUrl=${returnUrl}`;
+  const signInWithServer = (v: number) => {
+    const returnUrl = encodeURI(`${window.location.origin}/tmp-page`);
+    window.location.href = `http://192.168.62.13:8081/api/v1/view/check?v=${v}&returnUrl=${returnUrl}`;
   };
 
   return (
@@ -90,10 +88,33 @@ function SignIn() {
             }}
             onClick={(e) => {
               e.preventDefault();
-              signInWithServer();
+
+              setCookie('apiVersion', '1');
+              signInWithServer(1);
             }}
           >
             SSO sign-in(w. JWT)
+          </button>
+        </div>
+        <div>
+          <button
+            style={{
+              width: '100%',
+              height: '50px',
+              backgroundColor: '#00afaf',
+              color: 'white',
+              cursor: 'pointer',
+              borderRadius: '7px',
+              borderColor: 'white',
+            }}
+            onClick={(e) => {
+              e.preventDefault();
+
+              setCookie('apiVersion', '2');
+              signInWithServer(2);
+            }}
+          >
+            SSO sign-in(w. sessionDB)
           </button>
         </div>
       </div>
