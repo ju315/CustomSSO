@@ -22,13 +22,34 @@ const Home = () => {
     navigator('/sign-in');
   };
 
+  const requestAPIServer = () => {
+    console.log('something send...');
+  };
   return (
     <>
       <div>
         <h1>Home</h1>
       </div>
       {!!tokenData.accessToken ? (
-        <ViewTokenData tokenData={tokenData} setTokenData={setTokenData} />
+        <ViewTokenData tokenData={tokenData} setTokenData={setTokenData}>
+          <button
+            style={{
+              width: '100%',
+              height: '50px',
+              backgroundColor: '#5f5fff',
+              color: 'white',
+              cursor: 'pointer',
+              borderRadius: '7px',
+              borderColor: 'white',
+            }}
+            onClick={(e) => {
+              e.preventDefault();
+              requestAPIServer();
+            }}
+          >
+            Request something API Server
+          </button>
+        </ViewTokenData>
       ) : (
         <div>
           <button

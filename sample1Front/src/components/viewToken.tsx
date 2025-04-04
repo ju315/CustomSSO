@@ -90,7 +90,10 @@ const ViewTokenData = ({ tokenData, setTokenData, children }: props) => {
     let hrefUrl = `http://192.168.62.13:8081/api/v${apiVersion}/view/sign-out?r=${returnUrl}`;
 
     if (apiVersion === 2) {
-      hrefUrl += `&u=${userData.uuid}`;
+      const serverUrl = encodeURIComponent(
+        `http://${window.location.hostname}:8001`,
+      );
+      hrefUrl += `&u=${userData.uuid}&s=${serverUrl}`;
     }
 
     window.location.href = hrefUrl;
@@ -125,8 +128,17 @@ const ViewTokenData = ({ tokenData, setTokenData, children }: props) => {
             </SyntaxHighlighter>
           </div>
         </div>
-        <div style={{ textAlign: 'center' }}>
+        <div style={{ display: 'flex' }}>
           <button
+            style={{
+              width: '100%',
+              height: '50px',
+              backgroundColor: '#a8a8a8',
+              color: 'white',
+              cursor: 'pointer',
+              borderRadius: '7px',
+              borderColor: 'white',
+            }}
             onClick={(e) => {
               e.preventDefault();
               onClickValidateBtn();
@@ -135,6 +147,15 @@ const ViewTokenData = ({ tokenData, setTokenData, children }: props) => {
             validate token
           </button>
           <button
+            style={{
+              width: '100%',
+              height: '50px',
+              backgroundColor: '#ff005f',
+              color: 'white',
+              cursor: 'pointer',
+              borderRadius: '7px',
+              borderColor: 'white',
+            }}
             onClick={(e) => {
               e.preventDefault();
               onClickCookieClear();
@@ -143,6 +164,15 @@ const ViewTokenData = ({ tokenData, setTokenData, children }: props) => {
             clear cookie
           </button>
           <button
+            style={{
+              width: '100%',
+              height: '50px',
+              backgroundColor: '#d70000',
+              color: 'white',
+              cursor: 'pointer',
+              borderRadius: '7px',
+              borderColor: 'white',
+            }}
             onClick={(e) => {
               e.preventDefault();
               const confirm = window.confirm('Really Sign out?');
