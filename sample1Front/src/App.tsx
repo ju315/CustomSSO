@@ -17,18 +17,20 @@ function App() {
   useEffect(() => {
     if (cookie && apiVersion === 2) {
       const at = jwtDecode(cookie.accessToken) as TokenData;
+      const url = `http://${window.location.hostname}`;
 
-      fetch(
-        `http://192.168.62.13:8081/api/v2/user/check-sign-in?s=${at.uuid}`,
-        {
-          method: 'GET',
+      fetch(`${url}:8001/api/user/check-sign-in`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-      )
+        body: JSON.stringify({ s: at.uuid }),
+      })
         .then((res) => res.json())
         .then((res) => {
           console.log(res);
 
-          if (!res) {
+          if (!res.data) {
             clearCookie('token');
 
             navigate('/');
