@@ -1,5 +1,6 @@
 import { Body, Controller, Post, Version } from '@nestjs/common';
 import { UserService } from './user.service';
+import { SignInDto } from './dto/signIn.dto';
 
 @Controller('user')
 export class UserController {
@@ -7,9 +8,10 @@ export class UserController {
 
   @Version('2')
   @Post('sign-in')
-  async signInUser(@Body() data: any) {
-    console.log('body data::', data);
-    const res = this.userService.signIn(data);
+  async signInUser(@Body() data: SignInDto) {
+    console.log('> > > /api/v2/sign-in < < <');
+    console.log('body::', data);
+    await this.userService.signIn(data);
 
     return {
       success: true,

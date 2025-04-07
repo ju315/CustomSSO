@@ -1,25 +1,34 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { firstValueFrom } from 'rxjs';
 
 import { AUTH_BACK } from 'src/common/const';
+import { SignInDto } from './dto/signIn.dto';
 
 @Injectable()
 export class UserService {
   private signInList = new Map();
 
-  constructor(private readonly httpService: HttpService) {}
+  constructor(
+    private readonly httpService: HttpService,
+    private readonly jwtService: JwtService,
+  ) {}
 
-  async signIn(data: any) {
-    const exist = this.signInList.get(data.sessionId);
-    console.log(exist);
+  async signIn(data: SignInDto) {
+    try {
+      // const tokenValidate = await this.jwtService.verifyAsync(
+      //   data.accessToken,
+      //   {
+      //     secret: 'bjpark',
+      //   },
+      // );
+      // console.log('token validate:: ', tokenValidate);
 
-    if (exist) {
-      throw new Error('already exist session!');
+      this.addSignInUser(data);
+    } catch (err) {
+      throw new UnauthorizedException('toke is expired!');
     }
-
-    const res = this.addSignInUser(data);
-    return res;
   }
 
   /**
@@ -27,16 +36,16 @@ export class UserService {
    * @param data
    * @returns
    */
-  async addSignInUser(data) {
+  addSignInUser(data: SignInDto) {
     this.signInList.set(data.sessionId, {
       accessToken: data.accessToken,
       refreshToken: data.refreshToken,
     });
 
-    console.log(this.signInList);
-
     const res = this.signInList.get(data.sessionId);
-    return res;
+
+    console.log('sign in list:: ', this.signInList);
+    console.log('save sign-in result: ', res);
   }
 
   async signOut(data: any) {
