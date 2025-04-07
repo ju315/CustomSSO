@@ -33,6 +33,8 @@ const TmpPage = () => {
         accessToken: at,
         refreshToken: rt,
       });
+
+      saveSignInData(at, rt);
     }
   }, []);
 
@@ -40,19 +42,22 @@ const TmpPage = () => {
     navigate('/');
   };
 
-  const saveSignInData = () => {
+  const saveSignInData = (at: string, rt: string) => {
     fetch(`${SAMPLE_BACK}/api/v2/user/sign-in`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        ...tokenData,
-        sessionId: (jwtDecode(tokenData.accessToken) as TokenData).uuid,
+        accessToken: at,
+        refreshToken: rt,
+        sessionId: (jwtDecode(at) as TokenData).uuid,
       }),
     })
       .then((res) => res.json())
-      .then((res) => console.log(res))
+      .then((res) =>
+        console.log('Save in Sign-in data in server result:: ', res),
+      )
       .catch((err) => console.error(err));
   };
 
@@ -78,24 +83,6 @@ const TmpPage = () => {
               }}
             >
               go home
-            </button>
-            <button
-              style={{
-                width: '100%',
-                height: '50px',
-                backgroundColor: '#afd700',
-                color: 'white',
-                cursor: 'pointer',
-                borderRadius: '7px',
-                borderColor: 'white',
-              }}
-              onClick={(e) => {
-                e.preventDefault();
-
-                saveSignInData();
-              }}
-            >
-              save sign-in data in API Server
             </button>
           </ViewTokenData>
         </>
