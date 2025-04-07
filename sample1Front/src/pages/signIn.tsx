@@ -57,14 +57,15 @@ function SignIn() {
     <div>
       <div className="App">
         <h1>SSO Sign-in</h1>
-        {/* <div style={{ marginBottom: '5px' }}>
+        <div>
           <button
+            disabled
             style={{
               width: '100%',
               height: '50px',
               backgroundColor: '#00afff',
               color: 'white',
-              cursor: 'pointer',
+              cursor: 'not-allowed',
               borderRadius: '7px',
               borderColor: 'white',
             }}
@@ -75,15 +76,16 @@ function SignIn() {
           >
             SSO Sign-in(w. Auth Client)
           </button>
-        </div> */}
+        </div>
         <div>
           <button
+            disabled
             style={{
               width: '100%',
               height: '50px',
               backgroundColor: '#5f5fff',
               color: 'white',
-              cursor: 'pointer',
+              cursor: 'not-allowed',
               borderRadius: '7px',
               borderColor: 'white',
             }}
