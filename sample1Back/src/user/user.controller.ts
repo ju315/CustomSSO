@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Version } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, Version } from '@nestjs/common';
 import { UserService } from './user.service';
 
 @Controller('user')
@@ -26,5 +26,12 @@ export class UserController {
   async singOutUser(@Body() data: any) {
     const res = this.userService.signOut(data);
     return res;
+  }
+
+  @Post('check-sign-in')
+  async checkSignInUser(@Body('s') sessionId: string) {
+    const res = await this.userService.checkSignInUser(sessionId);
+
+    return { data: res };
   }
 }

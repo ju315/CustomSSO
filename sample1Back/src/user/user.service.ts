@@ -1,12 +1,12 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpService } from '@nestjs/axios';
+import { Injectable } from '@nestjs/common';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class UserService {
   private signInList = new Map();
 
-  constructor() {
-    //
-  }
+  constructor(private readonly httpService: HttpService) {}
 
   async signIn(data: any) {
     const exist = this.signInList.get(data.sessionId);
@@ -20,6 +20,11 @@ export class UserService {
     return res;
   }
 
+  /**
+   * signInList에 정보를 저장하는 메서드.
+   * @param data
+   * @returns
+   */
   async addSignInUser(data) {
     this.signInList.set(data.sessionId, {
       accessToken: data.accessToken,
@@ -37,11 +42,45 @@ export class UserService {
     return res;
   }
 
-  async removeSignInUser(data: any) {
-    return null;
+  /**
+   * signInList에서 sessionId에 해당하는 값을 삭제하는 메서드.
+   * @param sessionId
+   * @returns
+   */
+  async removeSignInUser(sessionId: string) {
+    const signInData = this.signInList.has(sessionId);
+
+    if (!signInData) {
+      console.log('already sign out session.');
+
+      return true;
+    }
+
+    this.signInList.delete(sessionId);
   }
 
   async validateUser(data: any) {
     return null;
+  }
+
+  /**
+   * sessionId가 로그아웃 되었는지 authBack에 요청하는 메서드.
+   * @param sessionId
+   * @returns
+   */
+  async checkSignInUser(sessionId: string) {
+    const res = await firstValueFrom(
+      this.httpService.get(
+        `http://192.168.62.13:8081/api/v2/user/check-sign-in?s=${sessionId}`,
+      ),
+    );
+
+    if (!res.data) {
+      console.log('Sign out in Auth Server!');
+
+      this.removeSignInUser(sessionId);
+    }
+
+    return res.data;
   }
 }
