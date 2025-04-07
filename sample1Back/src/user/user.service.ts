@@ -2,6 +2,8 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 
+import { AUTH_BACK } from 'src/common/const';
+
 @Injectable()
 export class UserService {
   private signInList = new Map();
@@ -71,7 +73,7 @@ export class UserService {
   async checkSignInUser(sessionId: string) {
     const res = await firstValueFrom(
       this.httpService.get(
-        `http://192.168.62.13:8081/api/v2/user/check-sign-in?s=${sessionId}`,
+        `${AUTH_BACK}/api/v2/user/check-sign-in?s=${sessionId}`,
       ),
     );
 
