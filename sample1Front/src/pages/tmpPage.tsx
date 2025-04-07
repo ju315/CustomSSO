@@ -5,6 +5,7 @@ import { jwtDecode } from 'jwt-decode';
 import { setCookie } from '../common/util';
 import ViewTokenData from '../components/viewToken';
 import { TokenData } from '../common/type';
+import { SAMPLE_BACK } from '../common/const';
 
 const TmpPage = () => {
   const [query] = useSearchParams();
@@ -40,7 +41,7 @@ const TmpPage = () => {
   };
 
   const saveSignInData = () => {
-    fetch('http://192.168.62.13:8001/api/v2/user/sign-in', {
+    fetch(`${SAMPLE_BACK}/api/v2/user/sign-in`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

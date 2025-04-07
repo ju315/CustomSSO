@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import '../App.css';
 import { getCookie, setCookie } from '../common/util';
 import ViewTokenData from '../components/viewToken';
+import { AUTH_BACK } from '../common/const';
 
 function SignIn() {
   const [tokenData, setTokenData] = useState<{
@@ -49,7 +50,7 @@ function SignIn() {
 
   const signInWithServer = (v: number) => {
     const returnUrl = encodeURI(`${window.location.origin}/tmp-page`);
-    window.location.href = `http://192.168.62.13:8081/api/v1/view/check?v=${v}&r=${returnUrl}`;
+    window.location.href = `${AUTH_BACK}/api/v1/view/check?v=${v}&r=${returnUrl}`;
   };
 
   return (

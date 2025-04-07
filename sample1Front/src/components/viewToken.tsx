@@ -5,6 +5,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { coldarkDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 import { clearCookie, getCookie } from '../common/util';
+import { AUTH_BACK, SAMPLE_BACK } from '../common/const';
 
 interface props {
   tokenData: { accessToken: string; refreshToken: string };
@@ -26,7 +27,7 @@ const ViewTokenData = ({ tokenData, setTokenData, children }: props) => {
   }, []);
 
   const getNewAccessToken = () => {
-    fetch('http://192.168.62.13:8081/api/v1/user/new-token', {
+    fetch(`${AUTH_BACK}/api/v1/user/new-token`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -46,7 +47,7 @@ const ViewTokenData = ({ tokenData, setTokenData, children }: props) => {
   };
 
   const onClickValidateBtn = () => {
-    fetch('http://192.168.62.13:8081/api/v1/user/validate', {
+    fetch(`${AUTH_BACK}/api/v1/user/validate`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -87,12 +88,10 @@ const ViewTokenData = ({ tokenData, setTokenData, children }: props) => {
     clearCookie('token');
 
     const returnUrl = encodeURIComponent(window.location.origin);
-    let hrefUrl = `http://192.168.62.13:8081/api/v${apiVersion}/view/sign-out?r=${returnUrl}`;
+    let hrefUrl = `${AUTH_BACK}/api/v${apiVersion}/view/sign-out?r=${returnUrl}`;
 
     if (apiVersion === 2) {
-      const serverUrl = encodeURIComponent(
-        `http://${window.location.hostname}:8001`,
-      );
+      const serverUrl = encodeURIComponent(`${SAMPLE_BACK}`);
       hrefUrl += `&u=${userData.uuid}&s=${serverUrl}`;
     }
 

@@ -7,6 +7,7 @@ import SignIn from './pages/signIn';
 import TmpPage from './pages/tmpPage';
 import { clearCookie, getCookie } from './common/util';
 import { TokenData } from './common/type/index';
+import { SAMPLE_BACK } from './common/const';
 
 function App() {
   const cookie = getCookie('token');
@@ -17,9 +18,8 @@ function App() {
   useEffect(() => {
     if (cookie && apiVersion === 2) {
       const at = jwtDecode(cookie.accessToken) as TokenData;
-      const url = `http://${window.location.hostname}`;
 
-      fetch(`${url}:8001/api/user/check-sign-in`, {
+      fetch(`${SAMPLE_BACK}/api/user/check-sign-in`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
