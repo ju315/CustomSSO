@@ -18,11 +18,7 @@ export class ViewController {
   @Version('1')
   @Get('sign-in')
   @Render('login')
-  viewSignIn(
-    @Query('r') r: string,
-    @Query('v') v: string,
-    @Req() req: Request,
-  ) {
+  viewSignIn(@Query('r') r: string, @Query('v') v: string) {
     return { r: decodeURIComponent(r), v };
   }
 

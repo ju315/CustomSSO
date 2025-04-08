@@ -1,8 +1,4 @@
-import {
-  HttpException,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { ForbiddenException, HttpException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as uuid from 'uuid';
 
@@ -67,12 +63,6 @@ export class UserService {
     try {
       const token = this.loginUser(userDto.userId, newUuid);
 
-      const exist = await this.signInHistory.findOne({
-        where: { sessionId: newUuid },
-      });
-
-      console.log('exist? ', exist);
-
       await this.signInHistory.save({
         sessionId: newUuid,
         isSignIn: true,
@@ -99,7 +89,7 @@ export class UserService {
     try {
       // Refresh Token 검증
       const decoded = this.jwtService.verify(refreshToken, {
-        secret: 'bjpark',
+        secret: 'SSO-PROJECT',
       });
 
       // 새로운 Access Token 발급
@@ -111,7 +101,7 @@ export class UserService {
 
       return { accessToken: newAccessToken };
     } catch (error) {
-      throw new UnauthorizedException('Refresh Token이 유효하지 않습니다.');
+      throw new ForbiddenException('Refresh Token이 유효하지 않습니다.');
     }
   }
 

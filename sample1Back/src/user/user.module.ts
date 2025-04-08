@@ -8,7 +8,7 @@ import { JwtModule } from '@nestjs/jwt';
   imports: [
     HttpModule,
     JwtModule.register({
-      secret: 'bjpark',
+      secret: 'SSO-PROJECT',
     }),
   ],
   controllers: [UserController],

@@ -20,7 +20,7 @@ export class UserService {
       // const tokenValidate = await this.jwtService.verifyAsync(
       //   data.accessToken,
       //   {
-      //     secret: 'bjpark',
+      //     secret: 'SSO-PROJECT',
       //   },
       // );
       // console.log('token validate:: ', tokenValidate);
