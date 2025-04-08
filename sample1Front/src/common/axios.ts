@@ -58,6 +58,7 @@ authApi.interceptors.response.use(
 
       return authApi(originalRequest);
     } catch (err) {
+      alert('세션이 만료되었습니다!');
       console.error('Get New AccessToken request get error.', error);
     }
   },
