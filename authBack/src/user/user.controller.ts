@@ -3,7 +3,6 @@ import {
   Controller,
   Get,
   Headers,
-  Ip,
   Post,
   Query,
   Req,
@@ -56,7 +55,6 @@ export class UserController {
   async userSignInV2(
     @Req() req: Request,
     @Body() userDto: { userId: string; password: string; returnUrl?: string },
-    @Ip() ip: string,
     @Res({ passthrough: true }) res: Response,
   ) {
     const token = await this.userService.userSignInV2(userDto, getRealIp(req));
