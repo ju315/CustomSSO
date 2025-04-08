@@ -6,6 +6,7 @@ import { coldarkDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 import { clearCookie, getCookie } from '../common/util';
 import { AUTH_BACK, SAMPLE_BACK } from '../common/const';
+import { authApi } from '../common/axios';
 
 interface props {
   tokenData: { accessToken: string; refreshToken: string };
@@ -26,51 +27,12 @@ const ViewTokenData = ({ tokenData, setTokenData, children }: props) => {
     setUserData(jwtDecode(tokenData.accessToken));
   }, []);
 
-  const getNewAccessToken = () => {
-    fetch(`${AUTH_BACK}/api/v1/user/new-token`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        authorization: `Bearer ${tokenData.refreshToken}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((res) => {
-        setTokenData({
-          ...tokenData,
-          accessToken: res.accessToken,
-        });
-
-        setUserData(jwtDecode(res.accessToken));
-      })
-      .catch((err) => console.error(err));
-  };
-
-  const onClickValidateBtn = () => {
-    fetch(`${AUTH_BACK}/api/v1/user/validate`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        authorization: `Bearer ${tokenData.accessToken}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((res) => {
-        if (res.statusCode === 401) {
-          alert(res.message);
-
-          const confirm = window.confirm('Get new access token?');
-
-          if (confirm) {
-            getNewAccessToken();
-          }
-        } else {
-          alert('The token is still valid.');
-        }
-      })
-      .catch((res) => {
-        console.error(res);
-      });
+  const onClickValidateBtn = async () => {
+    try {
+      await authApi.post('/api/v1/user/validate');
+    } catch (err) {
+      console.error('token validate get error. ', err);
+    }
   };
 
   const onClickCookieClear = () => {

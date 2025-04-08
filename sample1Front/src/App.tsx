@@ -7,7 +7,7 @@ import SignIn from './pages/signIn';
 import TmpPage from './pages/tmpPage';
 import { clearCookie, getCookie } from './common/util';
 import { TokenData } from './common/type/index';
-import { SAMPLE_BACK } from './common/const';
+import { sampleApi } from './common/axios';
 
 function App() {
   const cookie = getCookie('token');
@@ -19,24 +19,19 @@ function App() {
     if (cookie && apiVersion === 2) {
       const at = jwtDecode(cookie.accessToken) as TokenData;
 
-      fetch(`${SAMPLE_BACK}/api/user/check-sign-in`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ s: at.uuid }),
-      })
-        .then((res) => res.json())
+      sampleApi
+        .post('/api/user/check-sign-in', {
+          s: at.uuid,
+        })
         .then((res) => {
-          console.log(res);
-
-          if (!res.data) {
+          if (!res.data.data) {
             clearCookie('token');
-
             navigate('/');
           }
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          console.error('user sign-in check res get error.', err);
+        });
     }
   }, []);
 

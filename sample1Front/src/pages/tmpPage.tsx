@@ -5,7 +5,7 @@ import { jwtDecode } from 'jwt-decode';
 import { setCookie } from '../common/util';
 import ViewTokenData from '../components/viewToken';
 import { TokenData } from '../common/type';
-import { SAMPLE_BACK } from '../common/const';
+import { sampleApi } from '../common/axios';
 
 const TmpPage = () => {
   const [query] = useSearchParams();
@@ -42,23 +42,18 @@ const TmpPage = () => {
     navigate('/');
   };
 
-  const saveSignInData = (at: string, rt: string) => {
-    fetch(`${SAMPLE_BACK}/api/v2/user/sign-in`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
+  const saveSignInData = async (at: string, rt: string) => {
+    try {
+      const res = await sampleApi.post('/api/v2/user/sign-in', {
         accessToken: at,
         refreshToken: rt,
         sessionId: (jwtDecode(at) as TokenData).uuid,
-      }),
-    })
-      .then((res) => res.json())
-      .then((res) =>
-        console.log('Save in Sign-in data in server result:: ', res),
-      )
-      .catch((err) => console.error(err));
+      });
+
+      console.log('Save Sign-in data in server result:: ', res.data);
+    } catch (err) {
+      console.error('Save Sign-in data get error.', err);
+    }
   };
 
   return (
