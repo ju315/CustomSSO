@@ -20,7 +20,6 @@ export const sampleApi = axios.create({
 authApi.interceptors.request.use(
   (config) => {
     const token = getCookie('token');
-    console.log(token);
 
     if (token) {
       config.headers.Authorization = `Bearer ${token.accessToken}`;
@@ -28,15 +27,13 @@ authApi.interceptors.request.use(
 
     return config;
   },
-  (error) => console.error('interceptors catch error.', error),
+  (error) => console.error('AuthAPI request interceptors catch error.', error),
 );
 
 authApi.interceptors.response.use(
   (res) => res,
   async (error) => {
-    console.log('> > > res error interceptor < < <');
     const originalRequest = error.config;
-    console.log(originalRequest);
 
     // 401처리
     if (error.status !== 401) return error;
@@ -61,7 +58,7 @@ authApi.interceptors.response.use(
 
       return authApi(originalRequest);
     } catch (err) {
-      console.error(err);
+      console.error('Get New AccessToken request get error.', error);
     }
   },
 );
