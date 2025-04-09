@@ -10,7 +10,7 @@ import { SignHistoryModel } from 'src/common/entity/signIn.entity';
 @Module({
   imports: [
     JwtModule.register({
-      secret: 'bjpark',
+      secret: 'SSO-PROJECT',
     }),
     TypeOrmModule.forFeature([SignHistoryModel]),
   ],
