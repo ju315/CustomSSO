@@ -34,6 +34,12 @@ const TmpPage = () => {
         refreshToken: rt,
       });
 
+      const sid = (jwtDecode(at) as TokenData).uuid;
+
+      if (sid) {
+        setCookie('SSO_PROJECT.sid', sid);
+      }
+
       saveSignInData(at, rt);
     }
   }, []);

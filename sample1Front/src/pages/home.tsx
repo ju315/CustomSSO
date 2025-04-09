@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { getCookie } from '../common/util';
 import ViewTokenData from '../components/viewToken';
+import { sampleApi } from '../common/axios';
 
 const Home = () => {
   const navigator = useNavigate();
@@ -23,7 +24,16 @@ const Home = () => {
   };
 
   const requestAPIServer = () => {
-    console.log('something send...');
+    sampleApi
+      .post('/api/user/test')
+      .then((res) => alert('Test success.'))
+      .catch((err) => {
+        console.error(err.response.data.message);
+
+        if (err.status === 401) {
+          alert('Already sign-out session!');
+        }
+      });
   };
   return (
     <>
@@ -47,7 +57,7 @@ const Home = () => {
               requestAPIServer();
             }}
           >
-            Request something API Server
+            Test request Sample Server
           </button>
         </ViewTokenData>
       ) : (
