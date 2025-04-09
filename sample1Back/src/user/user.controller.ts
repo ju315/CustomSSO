@@ -1,6 +1,7 @@
-import { Body, Controller, Post, Version } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards, Version } from '@nestjs/common';
 import { UserService } from './user.service';
 import { SignInDto } from './dto/signIn.dto';
+import { SignInGuard } from 'src/common/guard/signIn.guard';
 
 @Controller('user')
 export class UserController {
@@ -9,8 +10,6 @@ export class UserController {
   @Version('2')
   @Post('sign-in')
   async signInUser(@Body() data: SignInDto) {
-    console.log('> > > /api/v2/sign-in < < <');
-    console.log('body::', data);
     await this.userService.signIn(data);
 
     return {
@@ -35,5 +34,11 @@ export class UserController {
     const res = await this.userService.checkSignInUser(sessionId);
 
     return { data: res };
+  }
+
+  @UseGuards(SignInGuard)
+  @Post('test')
+  async test() {
+    return { data: null };
   }
 }

@@ -1,5 +1,5 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { firstValueFrom } from 'rxjs';
 
@@ -9,6 +9,7 @@ import { SignInDto } from './dto/signIn.dto';
 @Injectable()
 export class UserService {
   private signInList = new Map();
+  private logger = new Logger(UserService.name);
 
   constructor(
     private readonly httpService: HttpService,
@@ -44,8 +45,8 @@ export class UserService {
 
     const res = this.signInList.get(data.sessionId);
 
-    console.log('sign in list:: ', this.signInList);
-    console.log('save sign-in result: ', res);
+    this.logger.debug(`Sign-in list:: ${JSON.stringify(this.signInList)}`);
+    this.logger.debug(`Save Sign-in list result:: ${JSON.stringify(res)}`);
   }
 
   async signOut(data: any) {
@@ -62,12 +63,16 @@ export class UserService {
     const signInData = this.signInList.has(sessionId);
 
     if (!signInData) {
-      console.log('already sign out session.');
+      this.logger.debug('already sign out session.');
 
       return true;
     }
 
     this.signInList.delete(sessionId);
+
+    this.logger.debug(
+      `Current sign-in session list:: ${JSON.stringify(this.signInList)}`,
+    );
   }
 
   async validateUser(data: any) {
@@ -87,7 +92,7 @@ export class UserService {
     );
 
     if (!res.data) {
-      console.log('Sign out in Auth Server!');
+      this.logger.debug('Sign out in Auth Server!');
 
       this.removeSignInUser(sessionId);
     }
