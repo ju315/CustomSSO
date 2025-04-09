@@ -45,7 +45,7 @@ const TmpPage = () => {
   }, []);
 
   const goHome = () => {
-    navigate('/');
+    navigate('/', { replace: true });
   };
 
   const saveSignInData = async (at: string, rt: string) => {
@@ -57,8 +57,10 @@ const TmpPage = () => {
       });
 
       console.log('Save Sign-in data in server result:: ', res.data);
+      goHome();
     } catch (err) {
       console.error('Save Sign-in data get error.', err);
+      goHome();
     }
   };
 

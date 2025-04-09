@@ -50,7 +50,10 @@ function SignIn() {
 
   const signInWithServer = (v: number) => {
     const returnUrl = encodeURI(`${window.location.origin}/tmp-page`);
-    window.location.href = `${AUTH_BACK}/api/v1/view/check?v=${v}&r=${returnUrl}`;
+    // window.location.href = `${AUTH_BACK}/api/v1/view/check?v=${v}&r=${returnUrl}`;
+    window.location.replace(
+      `${AUTH_BACK}/api/v1/view/check?v=${v}&r=${returnUrl}`,
+    );
   };
 
   return (

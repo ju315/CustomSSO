@@ -90,7 +90,7 @@ const ViewTokenData = ({ tokenData, setTokenData, children }: props) => {
           </div>
         </div>
         <div style={{ display: 'flex' }}>
-          <button
+          {/* <button
             style={{
               width: '100%',
               height: '50px',
@@ -123,7 +123,7 @@ const ViewTokenData = ({ tokenData, setTokenData, children }: props) => {
             }}
           >
             clear cookie
-          </button>
+          </button> */}
           <button
             style={{
               width: '100%',
