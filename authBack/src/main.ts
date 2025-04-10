@@ -12,6 +12,7 @@ async function bootstrap() {
     origin: '*',
     methods: 'GET, HEAD, PUT, PATCH, POST, DELETE',
     allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
   });
 
   app.setGlobalPrefix('api');
@@ -21,6 +22,8 @@ async function bootstrap() {
 
   app.useBodyParser('json');
   app.setBaseViewsDir(join(__dirname, '..', 'views'));
+  app.useStaticAssets(join(__dirname, '..', 'public'));
+
   app.setViewEngine('hbs');
 
   await app.listen(3000);

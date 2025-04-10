@@ -2,6 +2,7 @@
   <head>
     <title>sign-in</title>
   </head>
+  <script src="/js/cookie-check.js"></script>
   <body>
     <h1>sign-in</h1>
     <form id="sign-in-form" method='POST'>
@@ -20,6 +21,14 @@
     <div><span>api version: {{v}}</span></div>
     <script>
       const version = '{{{v}}}'
+      const returnUrl = '{{{r}}}'
+      const token = tokenCookieCheck();
+
+      if (token) {
+        {{!-- 토큰이 있는경우 RETURN URL로 이동 --}}
+        window.location.replace(returnUrl + '?at=' + token.accessToken + '&rt=' + token.refreshToken);
+      }
+
       function updateAction(event) {
         event.preventDefault();
 

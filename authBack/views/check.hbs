@@ -2,27 +2,21 @@
   <head>
     <title>check...</title>
   </head>
+  <script src="/js/cookie-check.js"></script>
   <body>
     <h1>check cookie...</h1>
     <script>
-      const cookie = document.cookie;
       const returnUrl = '{{{r}}}';
       const version = '{{{v}}}'
-
-      const token = cookie .split('; ')
-        .find((x) => x.includes('token'));
+      const token = tokenCookieCheck();
 
       if (token) {
         {{!-- token이 있는 경우 토큰 데이터와 함께 본래 URL로 복귀. --}}
-        const [name, data] = token.split('=');
-        const tokenData = JSON.parse(decodeURIComponent(data));
-
-        window.location.href = returnUrl + '?at=' + tokenData.accessToken + '&rt=' + tokenData.refreshToken;
+        window.location.replace(returnUrl + '?at=' + token.accessToken + '&rt=' + token.refreshToken);
       } else {
         {{!-- TOKEN이 없는 경우 로그인 페이지로 이동. --}}
         const href = `/api/v1/view/sign-in?r=${returnUrl}`;
-
-        window.location.href = `/api/v1/view/sign-in?r=${returnUrl}&v=${version}`;
+        window.location.replace(`/api/v1/view/sign-in?r=${returnUrl}&v=${version}`);
       }
     </script>
   </body>
