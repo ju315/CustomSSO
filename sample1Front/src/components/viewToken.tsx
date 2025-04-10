@@ -106,8 +106,8 @@ const ViewTokenData = ({ tokenData, setTokenData, children }: props) => {
             }}
           >
             validate token
-          </button>
-          <button
+          </button> */}
+          {/* <button
             style={{
               width: '100%',
               height: '50px',

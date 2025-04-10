@@ -8,7 +8,6 @@ export const authApi = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  withCredentials: true,
 });
 
 export const sampleApi = axios.create({
