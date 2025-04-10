@@ -13,8 +13,6 @@ function App() {
   const cookie = getCookie('token');
   const apiVersion = getCookie('apiVersion');
 
-  const navigate = useNavigate();
-
   useEffect(() => {
     if (cookie && apiVersion === 2) {
       const at = jwtDecode(cookie.accessToken) as TokenData;
@@ -26,14 +24,14 @@ function App() {
         .then((res) => {
           if (!res.data.data) {
             clearCookie('token');
-            navigate('/');
+            window.location.replace('/');
           }
         })
         .catch((err) => {
           console.error('user sign-in check res get error.', err);
         });
     }
-  }, []);
+  }, [apiVersion, cookie]);
 
   return (
     <Routes>
