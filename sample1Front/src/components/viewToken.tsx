@@ -46,18 +46,21 @@ const ViewTokenData = ({ tokenData, setTokenData, children }: props) => {
     navigator('/sign-in');
   };
 
-  const onClickSingOut = () => {
-    clearCookie('token');
+  const onClickSingOut = async () => {
+    try {
+      clearCookie('token');
+      const returnUrl = encodeURIComponent(window.location.origin);
+      let hrefUrl = `${AUTH_BACK}/api/v${apiVersion}/view/sign-out?r=${returnUrl}`;
 
-    const returnUrl = encodeURIComponent(window.location.origin);
-    let hrefUrl = `${AUTH_BACK}/api/v${apiVersion}/view/sign-out?r=${returnUrl}`;
+      if (apiVersion === 2) {
+        const serverUrl = encodeURIComponent(`${SAMPLE_BACK}`);
+        hrefUrl += `&u=${userData.uuid}&s=${serverUrl}`;
+      }
 
-    if (apiVersion === 2) {
-      const serverUrl = encodeURIComponent(`${SAMPLE_BACK}`);
-      hrefUrl += `&u=${userData.uuid}&s=${serverUrl}`;
+      window.location.href = hrefUrl;
+    } catch (err) {
+      console.error(err);
     }
-
-    window.location.href = hrefUrl;
   };
 
   return (
@@ -85,7 +88,7 @@ const ViewTokenData = ({ tokenData, setTokenData, children }: props) => {
           <span style={{ textAlign: 'left' }}>token data</span>
           <div>
             <SyntaxHighlighter language="javascript" style={coldarkDark}>
-              {JSON.stringify(userData)}
+              {JSON.stringify(userData, null, 2)}
             </SyntaxHighlighter>
           </div>
         </div>
