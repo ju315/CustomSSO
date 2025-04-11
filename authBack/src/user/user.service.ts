@@ -1,11 +1,16 @@
 import { ForbiddenException, HttpException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import * as uuid from 'uuid';
 
 import { UserRepository } from './user.repository';
-import { InjectRepository } from '@nestjs/typeorm';
 import { SignHistoryModel } from 'src/common/entity/signIn.entity';
-import { Repository } from 'typeorm';
+import { UserDataType } from './dummyData/user.dummy';
+
+interface SessionUserDataType extends UserDataType {
+  uuid?: string;
+}
 
 @Injectable()
 export class UserService {
@@ -26,13 +31,12 @@ export class UserService {
       throw new HttpException('User is not exist!', 404);
     }
 
-    return this.loginUser(userDto.userId);
+    return this.loginUser(user);
   }
 
-  signToken(userId: string, isRefreshToken: boolean, uuid?: string) {
+  signToken(userData: UserDataType, isRefreshToken: boolean) {
     const payload = {
-      userId,
-      ...(uuid && { uuid }),
+      ...userData,
       type: isRefreshToken ? 'refresh' : 'access',
     };
 
@@ -41,10 +45,10 @@ export class UserService {
     });
   }
 
-  loginUser(userId: string, uuid?: string) {
+  loginUser(userData: SessionUserDataType) {
     return {
-      accessToken: this.signToken(userId, false, uuid),
-      refreshToken: this.signToken(userId, true, uuid),
+      accessToken: this.signToken(userData, false),
+      refreshToken: this.signToken(userData, true),
     };
   }
 
@@ -61,7 +65,7 @@ export class UserService {
     const newUuid = uuid.v4();
 
     try {
-      const token = this.loginUser(userDto.userId, newUuid);
+      const token = this.loginUser({ ...user, uuid: newUuid });
 
       await this.signInHistory.save({
         sessionId: newUuid,
@@ -93,11 +97,7 @@ export class UserService {
       });
 
       // 새로운 Access Token 발급
-      const newAccessToken = this.signToken(
-        decoded.userId,
-        false,
-        decoded.uuid,
-      );
+      const newAccessToken = this.signToken(decoded, false);
 
       return { accessToken: newAccessToken };
     } catch (error) {
