@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import './SignIn.css';
-import { setCookie } from '../../common/util';
+import { getVersionPrefix, setCookie } from '../../common/util';
 import { sampleApi } from '../../common/axios';
 import { SignType } from '../../common/type';
 import { SIGN_TYPE_COOKIE_NAME } from '../../common/const';
@@ -21,18 +21,20 @@ const SignIn = () => {
     userId: '',
     password: '',
   });
+  const [version, setVersion] = useState<string>('');
 
   useEffect(() => {
     const type = query.get('t');
 
     if (type && type in SignType) {
       setSignType(SignType[type as keyof typeof SignType]);
+      setVersion(getVersionPrefix(type as SignType));
     }
   }, [query]);
 
   const onClickSignInBtn = async () => {
     try {
-      const res = await sampleApi.post('/v1/user/sign-in', {
+      const res = await sampleApi.post(`/${version}/user/sign-in`, {
         ...signData,
         signType,
       });
