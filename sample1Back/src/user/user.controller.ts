@@ -1,6 +1,14 @@
-import { Body, Controller, Post, UseGuards, Version } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  Res,
+  UseGuards,
+  Version,
+} from '@nestjs/common';
 
 import { UserService } from './user.service';
+import { Response } from 'express';
 import { SignInDto } from './dto/signIn.dto';
 import { SignInGuard } from 'src/common/guard/signIn.guard';
 
@@ -8,38 +16,33 @@ import { SignInGuard } from 'src/common/guard/signIn.guard';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Version('2')
-  @Post('sign-in')
-  async signInUser(@Body() data: SignInDto) {
-    await this.userService.signIn(data);
+  @Version('1')
+  @Post('/sign-in')
+  async userSignIn(@Body() body: SignInDto, @Res() res: Response) {
+    const result = await this.userService.signInBase(body);
 
-    return {
-      success: true,
-    };
+    res.cookie('user', JSON.stringify(result));
+    res.cookie('TEST.sid', result.sessionId);
+
+    return res.status(200).send(result);
   }
 
-  @Post('validate')
-  async validateUser(@Body() data: any) {
-    const res = this.userService.validateUser(data);
-    return res;
-  }
-
-  @Post('sign-out')
-  async singOutUser(@Body() data: any) {
-    const res = this.userService.signOut(data);
-    return res;
-  }
-
-  @Post('check-sign-in')
-  async checkSignInUser(@Body('s') sessionId: string) {
-    const res = await this.userService.checkSignInUser(sessionId);
-
-    return { data: res };
-  }
-
+  @Version('1')
   @UseGuards(SignInGuard)
-  @Post('test')
-  async test() {
-    return { data: null };
+  @Post('/sign-out')
+  async userSignOut(@Body() data: { sid: string }, @Res() res: Response) {
+    await this.userService.signOut(data.sid);
+
+    res.clearCookie('TEST.sid');
+    res.clearCookie('user');
+
+    res.status(200).send();
+  }
+
+  @Version('1')
+  @UseGuards(SignInGuard)
+  @Post('/test')
+  userTest() {
+    return { data: 'ok' };
   }
 }

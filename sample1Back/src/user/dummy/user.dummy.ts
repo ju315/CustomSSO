@@ -1,4 +1,4 @@
-export interface UserDataType {
+export interface UserData {
   id: string;
   password: string;
   name: string;
@@ -6,7 +6,7 @@ export interface UserDataType {
   bio: string;
 }
 
-export const userList: UserDataType[] = [
+export const DUMMY_USER_LIST: UserData[] = [
   {
     id: 'user1',
     password: '1234',

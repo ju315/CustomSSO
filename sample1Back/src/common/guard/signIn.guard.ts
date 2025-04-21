@@ -15,11 +15,10 @@ export class SignInGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const req = context.switchToHttp().getRequest();
-    const sessionId = req.cookies['SSO_PROJECT.sid'];
+    const sessionId = req.cookies['TEST.sid'];
+    const signType = req.cookies['SIGN-TYPE'];
 
-    const res = await this.userService.checkSignInUser(sessionId);
-
-    this.logger.debug(`Check Sign-in state:: ${res}`);
+    const res = this.userService.checkUserSession(sessionId);
 
     if (res) {
       return true;

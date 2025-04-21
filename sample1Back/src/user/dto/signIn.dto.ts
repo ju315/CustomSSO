@@ -1,12 +1,16 @@
-import { IsString } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 
 export class SignInDto {
   @IsString()
+  userId: string;
+
+  @IsString()
+  password: string;
+
+  @IsString()
+  signType: string;
+
+  @IsString()
+  @IsOptional()
   sessionId: string;
-
-  @IsString()
-  accessToken: string;
-
-  @IsString()
-  refreshToken: string;
 }

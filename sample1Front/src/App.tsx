@@ -9,6 +9,7 @@ import { clearCookie, getCookie } from './common/util';
 import { TokenData } from './common/type/index';
 import { sampleApi } from './common/axios';
 import SignIn from './pages/SignIn';
+import My from './pages/my';
 
 function App() {
   const cookie = getCookie('token');
@@ -40,6 +41,7 @@ function App() {
       <Route path="/sign-in-list" element={<SignInList />} />
       <Route path="/sign-in" element={<SignIn />} />
       <Route path="/tmp-page" element={<TmpPage />} />
+      <Route path="/my" element={<My />} />
     </Routes>
   );
 }

@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosError, AxiosResponse } from 'axios';
 
 import { AUTH_BACK, SAMPLE_BACK } from './const';
 import { getCookie, setCookie } from './util';
@@ -17,6 +17,25 @@ export const sampleApi = axios.create({
   },
   withCredentials: true,
 });
+
+sampleApi.interceptors.response.use(
+  (res: AxiosResponse) => res,
+  (err: AxiosError) => {
+    if (err.response && err.response.status === 401) {
+      const msg = err.response.data?.message;
+
+      // todo: msg 대신 코드로 사용할것.
+      if (msg === 'User is not exist') {
+        return Promise.reject(err);
+      }
+
+      alert('만료된 세션입니다. 로그인 페이지로 이동합니다.');
+      window.location.href = '/';
+    }
+
+    return Promise.reject(err);
+  },
+);
 
 authApi.interceptors.request.use(
   (config) => {

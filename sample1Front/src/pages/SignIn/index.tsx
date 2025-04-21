@@ -1,15 +1,10 @@
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import './SignIn.css';
 import { setCookie } from '../../common/util';
 import { sampleApi } from '../../common/axios';
-
-enum SignType {
-  BASE = 'BASE',
-  SYSTEM = 'SYSTEM',
-  SSO = 'SSO',
-}
+import { SignType } from '../../common/type';
 
 interface SignData {
   userId: string;
@@ -17,6 +12,7 @@ interface SignData {
 }
 
 const SignIn = () => {
+  const navigator = useNavigate();
   const [query] = useSearchParams();
 
   const [signType, setSignType] = useState<SignType>(SignType.BASE);
@@ -34,12 +30,18 @@ const SignIn = () => {
   }, [query]);
 
   const onClickSignInBtn = async () => {
-    setCookie('SIGN-TYPE', signType);
-    const res = await sampleApi.post('/user/sign-in', {
-      body: signData,
-    });
+    try {
+      const res = await sampleApi.post('/v1/user/sign-in', {
+        ...signData,
+        signType,
+      });
 
-    console.log(res);
+      setCookie('SIGN-TYPE', signType);
+      console.log(res.data);
+      navigator('/my');
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (

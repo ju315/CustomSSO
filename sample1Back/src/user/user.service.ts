@@ -2,9 +2,12 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { firstValueFrom } from 'rxjs';
+import * as uuid from 'uuid';
 
 import { AUTH_BACK } from 'src/common/const';
 import { SignInDto } from './dto/signIn.dto';
+import { DUMMY_USER_LIST, UserData } from './dummy/user.dummy';
+import { SIGN_IN_DATA } from 'src/common/type/type';
 
 @Injectable()
 export class UserService {
@@ -16,20 +19,47 @@ export class UserService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async signIn(data: SignInDto) {
+  async signInBase(data: SignInDto) {
     try {
-      // const tokenValidate = await this.jwtService.verifyAsync(
-      //   data.accessToken,
-      //   {
-      //     secret: 'SSO-PROJECT',
-      //   },
-      // );
-      // console.log('token validate:: ', tokenValidate);
+      const user = this.validateBaseUser(data);
 
-      this.addSignInUser(data);
+      this.addSignInUser(user);
+
+      this.logger.debug(
+        `Sign-in list:: ${JSON.stringify(Object.fromEntries(this.signInList))}`,
+      );
+      return user;
     } catch (err) {
-      throw new UnauthorizedException('toke is expired!');
+      throw new UnauthorizedException('User is not exist');
     }
+  }
+
+  async signOut(sid: string) {
+    const res = this.removeSignInUser(sid);
+    return res;
+  }
+
+  validateBaseUser(data: SignInDto) {
+    if (data.signType === SIGN_IN_DATA.BASE) {
+      const user = DUMMY_USER_LIST.find(
+        (user: UserData) =>
+          user.id === data.userId && user.password === data.password,
+      );
+
+      if (!user) {
+        throw new UnauthorizedException('User is not exist');
+      }
+      const sessionId = uuid.v4();
+
+      return { ...user, sessionId };
+    }
+  }
+
+  checkUserSession(sid: string) {
+    const res = this.signInList.get(sid);
+    console.log(res);
+
+    return res;
   }
 
   /**
@@ -37,21 +67,8 @@ export class UserService {
    * @param data
    * @returns
    */
-  addSignInUser(data: SignInDto) {
-    this.signInList.set(data.sessionId, {
-      accessToken: data.accessToken,
-      refreshToken: data.refreshToken,
-    });
-
-    const res = this.signInList.get(data.sessionId);
-
-    this.logger.debug(`Sign-in list:: ${JSON.stringify(this.signInList)}`);
-    this.logger.debug(`Save Sign-in list result:: ${JSON.stringify(res)}`);
-  }
-
-  async signOut(data: any) {
-    const res = this.removeSignInUser(data);
-    return res;
+  addSignInUser(user) {
+    this.signInList.set(user.sessionId, user);
   }
 
   /**
@@ -71,12 +88,10 @@ export class UserService {
     this.signInList.delete(sessionId);
 
     this.logger.debug(
-      `Current sign-in session list:: ${JSON.stringify(this.signInList)}`,
+      `Current sign-in session list:: ${JSON.stringify(
+        Object.fromEntries(this.signInList),
+      )}`,
     );
-  }
-
-  async validateUser(data: any) {
-    return null;
   }
 
   /**
