@@ -5,6 +5,7 @@ import './SignIn.css';
 import { setCookie } from '../../common/util';
 import { sampleApi } from '../../common/axios';
 import { SignType } from '../../common/type';
+import { SIGN_TYPE_COOKIE_NAME } from '../../common/const';
 
 interface SignData {
   userId: string;
@@ -36,7 +37,7 @@ const SignIn = () => {
         signType,
       });
 
-      setCookie('SIGN-TYPE', signType);
+      setCookie(SIGN_TYPE_COOKIE_NAME, signType);
       console.log(res.data);
       navigator('/my');
     } catch (err) {

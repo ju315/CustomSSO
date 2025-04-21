@@ -11,6 +11,7 @@ import { UserService } from './user.service';
 import { Response } from 'express';
 import { SignInDto } from './dto/signIn.dto';
 import { SignInGuard } from 'src/common/guard/signIn.guard';
+import { SESSION_COOKIE_NAME, USER_COOKIE_NAME } from 'src/common/const';
 
 @Controller('user')
 export class UserController {
@@ -21,8 +22,8 @@ export class UserController {
   async userSignIn(@Body() body: SignInDto, @Res() res: Response) {
     const result = await this.userService.signInBase(body);
 
-    res.cookie('user', JSON.stringify(result));
-    res.cookie('TEST.sid', result.sessionId);
+    res.cookie(USER_COOKIE_NAME, JSON.stringify(result));
+    res.cookie(SESSION_COOKIE_NAME, result.sessionId);
 
     return res.status(200).send(result);
   }
@@ -33,8 +34,8 @@ export class UserController {
   async userSignOut(@Body() data: { sid: string }, @Res() res: Response) {
     await this.userService.signOut(data.sid);
 
-    res.clearCookie('TEST.sid');
-    res.clearCookie('user');
+    res.clearCookie(SESSION_COOKIE_NAME);
+    res.clearCookie(USER_COOKIE_NAME);
 
     res.status(200).send();
   }

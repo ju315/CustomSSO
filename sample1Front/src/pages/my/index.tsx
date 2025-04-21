@@ -7,12 +7,13 @@ import { getCookie } from '../../common/util';
 import SignBtn from '../../components/signBtn';
 import { sampleApi } from '../../common/axios';
 import { SignType } from '../../common/type';
+import { SIGN_TYPE_COOKIE_NAME, USER_COOKIE_NAME } from '../../common/const';
 
 const My = () => {
   const navigator = useNavigate();
 
-  const me = getCookie('user');
-  const signType = getCookie('SIGN-TYPE');
+  const me = getCookie(USER_COOKIE_NAME);
+  const signType = getCookie(SIGN_TYPE_COOKIE_NAME);
 
   const versionPrefix =
     signType === SignType.BASE
