@@ -3,11 +3,12 @@ import { Route, Routes, useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 
 import Home from './pages/home';
-import SignIn from './pages/signIn';
+import SignInList from './pages/SignInList';
 import TmpPage from './pages/tmpPage';
 import { clearCookie, getCookie } from './common/util';
 import { TokenData } from './common/type/index';
 import { sampleApi } from './common/axios';
+import SignIn from './pages/SignIn';
 
 function App() {
   const cookie = getCookie('token');
@@ -36,6 +37,7 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
+      <Route path="/sign-in-list" element={<SignInList />} />
       <Route path="/sign-in" element={<SignIn />} />
       <Route path="/tmp-page" element={<TmpPage />} />
     </Routes>

@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { getCookie } from '../common/util';
 import ViewTokenData from '../components/viewToken';
 import { sampleApi } from '../common/axios';
+import SignBtn from '../components/signBtn';
 
 const Home = () => {
   const navigator = useNavigate();
@@ -20,7 +21,7 @@ const Home = () => {
   }, []);
 
   const onClickSingIn = () => {
-    navigator('/sign-in');
+    navigator('/sign-in-list');
   };
 
   const requestAPIServer = () => {
@@ -61,25 +62,13 @@ const Home = () => {
           </button>
         </ViewTokenData>
       ) : (
-        <div>
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              onClickSingIn();
-            }}
-            style={{
-              width: '100%',
-              height: '50px',
-              backgroundColor: '#5f5fff',
-              color: 'white',
-              cursor: 'pointer',
-              borderRadius: '7px',
-              borderColor: 'white',
-            }}
-          >
-            sign in
-          </button>
-        </div>
+        <SignBtn
+          title="Go Sign type List"
+          btnColor="#5f5fff"
+          onClick={() => {
+            navigator('/sign-in-list');
+          }}
+        />
       )}
     </>
   );
