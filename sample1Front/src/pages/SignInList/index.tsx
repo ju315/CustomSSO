@@ -67,7 +67,7 @@ const SignInList = () => {
           title="Base Sign-in"
           btnColor="#00afff"
           onClick={() => {
-            navigate('/sign-in?t=SSO');
+            navigate('/sign-in?t=BASE');
           }}
         />
         <SignBtn

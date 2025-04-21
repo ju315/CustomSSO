@@ -33,9 +33,13 @@ const SignIn = () => {
     }
   }, [query]);
 
-  const onClickSignInBtn = () => {
+  const onClickSignInBtn = async () => {
     setCookie('SIGN-TYPE', signType);
-    sampleApi('');
+    const res = await sampleApi.post('/user/sign-in', {
+      body: signData,
+    });
+
+    console.log(res);
   };
 
   return (
@@ -79,7 +83,6 @@ const SignIn = () => {
         <button
           onClick={(e) => {
             e.preventDefault();
-            window.alert(JSON.stringify(signData));
             onClickSignInBtn();
           }}
         >
