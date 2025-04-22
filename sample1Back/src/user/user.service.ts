@@ -5,30 +5,37 @@ import {
   Logger,
   UnauthorizedException,
 } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { catchError, firstValueFrom } from 'rxjs';
 import * as uuid from 'uuid';
 import { AxiosError } from 'axios';
 
 import { SignInDto } from './dto/signIn.dto';
 import { DUMMY_USER_LIST, UserData } from './dummy/user.dummy';
-import { SIGN_IN_DATA } from 'src/common/type/type';
+import { SIGN_IN_DATA, SIGN_IN_DATA_TYPE } from 'src/common/type/type';
+
+export interface SignUserData {
+  id: string;
+  password: string;
+  name: string;
+  email: string;
+  bio: string;
+  signSessionId?: string;
+  webSignSessionId: string;
+  signType: SIGN_IN_DATA_TYPE;
+}
 
 @Injectable()
 export class UserService {
-  private signInList = new Map();
+  private signInList = new Map<string, SignUserData>();
   private logger = new Logger(UserService.name);
 
-  constructor(
-    private readonly httpService: HttpService,
-    private readonly jwtService: JwtService,
-  ) {}
+  constructor(private readonly httpService: HttpService) {}
 
   async signInBase(data: SignInDto) {
     try {
       const user = this.validateBaseUser(data);
 
-      this.addSignInUser(user.sessionId, user);
+      this.addSignInUser(user.webSignSessionId, user);
 
       this.getSignInList();
 
@@ -43,7 +50,7 @@ export class UserService {
     return res;
   }
 
-  validateBaseUser(data: SignInDto) {
+  validateBaseUser(data: SignInDto): SignUserData {
     if (data.signType === SIGN_IN_DATA.BASE) {
       const user = DUMMY_USER_LIST.find(
         (user: UserData) =>
@@ -55,7 +62,12 @@ export class UserService {
       }
       const sessionId = uuid.v4();
 
-      return { ...user, sessionId };
+      return {
+        ...user,
+        signSessionId: sessionId,
+        webSignSessionId: sessionId,
+        signType: data.signType,
+      };
     }
   }
 
@@ -108,6 +120,8 @@ export class UserService {
       if (!res.data.res) {
         throw new Error();
       }
+
+      this.removeSignInUser(sid);
 
       return res.data;
     } catch (err) {

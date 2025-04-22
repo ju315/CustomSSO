@@ -23,8 +23,11 @@ export class SignInGuard implements CanActivate {
     if (signType === SIGN_IN_DATA.BASE) {
       const res = this.userService.checkUserSession(sessionId);
 
-      if (res) return true;
-    } else if (signType === SIGN_IN_DATA.SYSTEM) {
+      if (res) {
+        req.body.sid = sessionId;
+        return true;
+      }
+    } else if (signType === SIGN_IN_DATA.NORMAL) {
       const res = await this.userService.checkAuthUserSession(sessionId);
 
       if (res) return true;

@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 
-import { UserService } from './user.service';
+import { SignUserData, UserService } from './user.service';
 import { SignInDto } from './dto/signIn.dto';
 import { SignInGuard } from 'src/common/guard/signIn.guard';
 import { SESSION_COOKIE_NAME, USER_COOKIE_NAME } from 'src/common/const';
@@ -21,10 +21,10 @@ export class UserController {
   @Version('1')
   @Post('/sign-in')
   async userSignIn(@Body() body: SignInDto, @Res() res: Response) {
-    const result = await this.userService.signInBase(body);
+    const result: SignUserData = await this.userService.signInBase(body);
 
     res.cookie(USER_COOKIE_NAME, JSON.stringify(result));
-    res.cookie(SESSION_COOKIE_NAME, result.sessionId);
+    res.cookie(SESSION_COOKIE_NAME, result.webSignSessionId);
 
     return res.status(200).send(result);
   }
@@ -68,5 +68,11 @@ export class UserController {
     res.clearCookie(USER_COOKIE_NAME);
 
     return res.status(200).send(result);
+  }
+
+  @Version('3')
+  @Post('sign-in')
+  async userSignInV3(@Body() body: any, @Res() res: Response) {
+    console.log(body);
   }
 }

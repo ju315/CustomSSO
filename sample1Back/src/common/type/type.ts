@@ -1,6 +1,6 @@
 const SIGN_IN_DATA = {
   BASE: 'BASE',
-  SYSTEM: 'SYSTEM',
+  NORMAL: 'NORMAL',
   SSO: 'SSO',
 } as const;
 
