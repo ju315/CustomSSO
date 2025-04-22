@@ -6,7 +6,6 @@ import Home from './pages/home';
 import SignInList from './pages/SignInList';
 import TmpPage from './pages/tmpPage';
 import { clearCookie, getCookie } from './common/util';
-import { TokenData } from './common/type/index';
 import { sampleApi } from './common/axios';
 import SignIn from './pages/SignIn';
 import My from './pages/my';
@@ -16,23 +15,22 @@ function App() {
   const apiVersion = getCookie('apiVersion');
 
   useEffect(() => {
-    if (cookie && apiVersion === 2) {
-      const at = jwtDecode(cookie.accessToken) as TokenData;
-
-      sampleApi
-        .post('/api/user/check-sign-in', {
-          s: at.uuid,
-        })
-        .then((res) => {
-          if (!res.data.data) {
-            clearCookie('token');
-            window.location.replace('/');
-          }
-        })
-        .catch((err) => {
-          console.error('user sign-in check res get error.', err);
-        });
-    }
+    // if (cookie && apiVersion === 2) {
+    //   const at = jwtDecode(cookie.accessToken) as TokenData;
+    //   sampleApi
+    //     .post('/api/user/check-sign-in', {
+    //       s: at.uuid,
+    //     })
+    //     .then((res) => {
+    //       if (!res.data.data) {
+    //         clearCookie('token');
+    //         window.location.replace('/');
+    //       }
+    //     })
+    //     .catch((err) => {
+    //       console.error('user sign-in check res get error.', err);
+    //     });
+    // }
   }, [apiVersion, cookie]);
 
   return (
