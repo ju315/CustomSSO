@@ -1,12 +1,11 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { coldarkDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 import { getCookie, getVersionPrefix } from '../../common/util';
 import SignBtn from '../../components/signBtn';
 import { sampleApi } from '../../common/axios';
 import { SIGN_TYPE_COOKIE_NAME, USER_COOKIE_NAME } from '../../common/const';
+import ShowMyData from '../../components/showMyData';
 
 const My = () => {
   const navigator = useNavigate();
@@ -48,9 +47,7 @@ const My = () => {
     <div>
       <h1 style={{ textAlign: 'left' }}>My Info</h1>
       <div>
-        <SyntaxHighlighter language="javascript" style={coldarkDark}>
-          {JSON.stringify(me, null, 2)}
-        </SyntaxHighlighter>
+        <ShowMyData me={me} />
       </div>
       <SignBtn
         title="do something server"
