@@ -21,5 +21,5 @@ export const clearCookie = (name: string) => {
 };
 
 export const getVersionPrefix = (type: SignType) => {
-  return type === SignType.BASE ? 'v1' : type === SignType.SYSTEM ? 'v2' : 'v3';
+  return type === SignType.BASE ? 'v1' : type === SignType.NORMAL ? 'v2' : 'v3';
 };

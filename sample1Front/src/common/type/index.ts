@@ -7,6 +7,6 @@ export interface TokenData extends JwtPayload {
 
 export enum SignType {
   BASE = 'BASE',
-  SYSTEM = 'SYSTEM',
+  NORMAL = 'NORMAL',
   SSO = 'SSO',
 }

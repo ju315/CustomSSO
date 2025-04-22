@@ -30,7 +30,7 @@ const SignInList = () => {
           title="User System Sign-in"
           btnColor="#5f5fff"
           onClick={() => {
-            navigate('/sign-in?t=SYSTEM');
+            navigate('/sign-in?t=NORMAL');
           }}
         />
         <SignBtn
