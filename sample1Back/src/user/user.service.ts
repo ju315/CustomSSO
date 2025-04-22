@@ -1,10 +1,10 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { firstValueFrom } from 'rxjs';
+import { catchError, firstValueFrom } from 'rxjs';
 import * as uuid from 'uuid';
+import { AxiosError } from 'axios';
 
-import { AUTH_BACK } from 'src/common/const';
 import { SignInDto } from './dto/signIn.dto';
 import { DUMMY_USER_LIST, UserData } from './dummy/user.dummy';
 import { SIGN_IN_DATA } from 'src/common/type/type';
@@ -37,6 +37,28 @@ export class UserService {
   async signOut(sid: string) {
     const res = this.removeSignInUser(sid);
     return res;
+  }
+
+  async signInAuth(data: SignInDto) {
+    try {
+      const res = await firstValueFrom(
+        this.httpService
+          .post('/api/user/sign-in', {
+            ...data,
+          })
+          .pipe(
+            catchError((error: AxiosError) => {
+              this.logger.error(error.response.data);
+              throw 'An error happened!';
+            }),
+          ),
+      );
+
+      return res.data;
+    } catch (err) {
+      console.error(err);
+      throw new UnauthorizedException('User is not exist');
+    }
   }
 
   validateBaseUser(data: SignInDto) {
@@ -92,26 +114,5 @@ export class UserService {
         Object.fromEntries(this.signInList),
       )}`,
     );
-  }
-
-  /**
-   * sessionId가 로그아웃 되었는지 authBack에 요청하는 메서드.
-   * @param sessionId
-   * @returns
-   */
-  async checkSignInUser(sessionId: string) {
-    const res = await firstValueFrom(
-      this.httpService.get(
-        `${AUTH_BACK}/api/v2/user/check-sign-in?s=${sessionId}`,
-      ),
-    );
-
-    if (!res.data) {
-      this.logger.debug('Sign out in Auth Server!');
-
-      this.removeSignInUser(sessionId);
-    }
-
-    return res.data;
   }
 }

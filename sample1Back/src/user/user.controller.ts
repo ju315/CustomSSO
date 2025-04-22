@@ -6,9 +6,9 @@ import {
   UseGuards,
   Version,
 } from '@nestjs/common';
+import { Response } from 'express';
 
 import { UserService } from './user.service';
-import { Response } from 'express';
 import { SignInDto } from './dto/signIn.dto';
 import { SignInGuard } from 'src/common/guard/signIn.guard';
 import { SESSION_COOKIE_NAME, USER_COOKIE_NAME } from 'src/common/const';
@@ -37,7 +37,7 @@ export class UserController {
     res.clearCookie(SESSION_COOKIE_NAME);
     res.clearCookie(USER_COOKIE_NAME);
 
-    res.status(200).send();
+    return res.status(200).send();
   }
 
   @Version('1')
@@ -45,5 +45,16 @@ export class UserController {
   @Post('/test')
   userTest() {
     return { data: 'ok' };
+  }
+
+  @Version('2')
+  @Post('sign-in')
+  async userSignInV2(@Body() body: SignInDto, @Res() res: Response) {
+    const result = await this.userService.signInAuth(body);
+
+    res.cookie(USER_COOKIE_NAME, JSON.stringify(result));
+    res.cookie(SESSION_COOKIE_NAME, result.webSignSessionId);
+
+    return res.status(200).send(result);
   }
 }
