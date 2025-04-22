@@ -91,6 +91,29 @@ export class UserService {
 
   signInSSOType(userDto: SignInDto) {}
 
+  async checkUserSession(sid: string) {
+    const webSession = await this.webSession.findOne({
+      where: {
+        sessionId: sid,
+      },
+      relations: ['sign_session'],
+    });
+
+    if (!webSession.is_sign_in || !webSession.sign_session.is_sign_in) {
+      await this.webSession.save({
+        ...webSession,
+        is_sign_in: false,
+      });
+      await this.signSession.save({
+        ...webSession.sign_session,
+        is_sign_in: false,
+      });
+
+      return null;
+    }
+
+    return webSession;
+  }
   // signToken(userData: UserDataType, isRefreshToken: boolean) {
   //   const payload = {
   //     ...userData,

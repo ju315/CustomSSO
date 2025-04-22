@@ -23,11 +23,10 @@ export class UserService {
     try {
       const user = this.validateBaseUser(data);
 
-      this.addSignInUser(user);
+      this.addSignInUser(user.sessionId, user);
 
-      this.logger.debug(
-        `Sign-in list:: ${JSON.stringify(Object.fromEntries(this.signInList))}`,
-      );
+      this.getSignInList();
+
       return user;
     } catch (err) {
       throw new UnauthorizedException('User is not exist');
@@ -37,28 +36,6 @@ export class UserService {
   async signOut(sid: string) {
     const res = this.removeSignInUser(sid);
     return res;
-  }
-
-  async signInAuth(data: SignInDto) {
-    try {
-      const res = await firstValueFrom(
-        this.httpService
-          .post('/api/user/sign-in', {
-            ...data,
-          })
-          .pipe(
-            catchError((error: AxiosError) => {
-              this.logger.error(error.response.data);
-              throw 'An error happened!';
-            }),
-          ),
-      );
-
-      return res.data;
-    } catch (err) {
-      console.error(err);
-      throw new UnauthorizedException('User is not exist');
-    }
   }
 
   validateBaseUser(data: SignInDto) {
@@ -84,13 +61,60 @@ export class UserService {
     return res;
   }
 
+  async signInAuth(data: SignInDto) {
+    try {
+      const res = await firstValueFrom(
+        this.httpService
+          .post('/api/user/sign-in', {
+            ...data,
+          })
+          .pipe(
+            catchError((error: AxiosError) => {
+              this.logger.error(error.response.data);
+              throw 'An error happened!';
+            }),
+          ),
+      );
+
+      this.addSignInUser(res.data.webSignSessionId, res.data);
+
+      this.getSignInList();
+
+      return res.data;
+    } catch (err) {
+      console.error(err);
+      throw new UnauthorizedException('User is not exist');
+    }
+  }
+
+  async checkAuthUserSession(sid: string) {
+    try {
+      const res = await firstValueFrom(
+        this.httpService
+          .post('/api/user/check-session', {
+            sid,
+          })
+          .pipe(
+            catchError((error: AxiosError) => {
+              this.logger.error(error.response.data);
+              throw 'An error happened!';
+            }),
+          ),
+      );
+
+      return res.data;
+    } catch (err) {
+      throw new UnauthorizedException('session expired.');
+    }
+  }
+
   /**
    * signInList에 정보를 저장하는 메서드.
    * @param data
    * @returns
    */
-  addSignInUser(user) {
-    this.signInList.set(user.sessionId, user);
+  addSignInUser(sid, user) {
+    this.signInList.set(sid, user);
   }
 
   /**
@@ -114,5 +138,13 @@ export class UserService {
         Object.fromEntries(this.signInList),
       )}`,
     );
+  }
+
+  getSignInList() {
+    this.logger.debug(
+      `Sign-in list:: ${JSON.stringify(Object.fromEntries(this.signInList))}`,
+    );
+
+    return this.signInList;
   }
 }

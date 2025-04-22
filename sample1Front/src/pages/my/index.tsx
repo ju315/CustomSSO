@@ -23,8 +23,8 @@ const My = () => {
 
   const onClickRequest = async () => {
     try {
-      const res = await sampleApi.post(`/${versionPrefix}/user/test`);
-      console.log(res);
+      const res = await sampleApi.post(`/user/test`);
+      window.alert(res.data.data);
     } catch (err) {
       console.error(err);
     }

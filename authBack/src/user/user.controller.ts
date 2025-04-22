@@ -1,18 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Headers,
-  Ip,
-  Post,
-  Query,
-  Req,
-  Res,
-  UnauthorizedException,
-  UseGuards,
-  Version,
-} from '@nestjs/common';
-import { Request, Response } from 'express';
+import { Body, Controller, Post } from '@nestjs/common';
 
 import { UserService } from './user.service';
 import { SignInDto } from './dto/signIn.dto';
@@ -22,13 +8,18 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post('sign-in')
-  async userSignIn(@Body() data: SignInDto, @Ip() ip: string) {
-    console.log('> > > sign-in < < <');
-    console.log(data);
-    console.log(ip);
-
+  async userSignIn(@Body() data: SignInDto) {
     const res = await this.userService.userSignIn(data);
-    console.log('res:: ', res);
+
+    return res;
+  }
+
+  @Post('sign-out')
+  async userSignOut(@Body() data: any) {}
+
+  @Post('check-session')
+  async checkUserSession(@Body() data: { sid: string }) {
+    const res = await this.userService.checkUserSession(data.sid);
 
     return res;
   }

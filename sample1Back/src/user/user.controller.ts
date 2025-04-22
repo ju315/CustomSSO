@@ -40,7 +40,6 @@ export class UserController {
     return res.status(200).send();
   }
 
-  @Version('1')
   @UseGuards(SignInGuard)
   @Post('/test')
   userTest() {
