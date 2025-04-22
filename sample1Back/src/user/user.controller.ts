@@ -2,11 +2,12 @@ import {
   Body,
   Controller,
   Post,
+  Req,
   Res,
   UseGuards,
   Version,
 } from '@nestjs/common';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 
 import { UserService } from './user.service';
 import { SignInDto } from './dto/signIn.dto';
@@ -37,7 +38,7 @@ export class UserController {
     res.clearCookie(SESSION_COOKIE_NAME);
     res.clearCookie(USER_COOKIE_NAME);
 
-    return res.status(200).send();
+    return res.status(200).send({ res: true });
   }
 
   @UseGuards(SignInGuard)
@@ -53,6 +54,18 @@ export class UserController {
 
     res.cookie(USER_COOKIE_NAME, JSON.stringify(result));
     res.cookie(SESSION_COOKIE_NAME, result.webSignSessionId);
+
+    return res.status(200).send(result);
+  }
+
+  @Version('2')
+  @Post('sign-out')
+  async userSignOutV2(@Req() req: Request, @Res() res: Response) {
+    const sid = req.cookies[SESSION_COOKIE_NAME];
+    const result = await this.userService.singOutAuth(sid);
+
+    res.clearCookie(SESSION_COOKIE_NAME);
+    res.clearCookie(USER_COOKIE_NAME);
 
     return res.status(200).send(result);
   }

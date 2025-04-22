@@ -1,5 +1,10 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { catchError, firstValueFrom } from 'rxjs';
 import * as uuid from 'uuid';
@@ -84,6 +89,31 @@ export class UserService {
     } catch (err) {
       console.error(err);
       throw new UnauthorizedException('User is not exist');
+    }
+  }
+
+  async singOutAuth(sid: string) {
+    try {
+      const res = await firstValueFrom(
+        this.httpService.post('/api/user/sign-out', { sid }).pipe(
+          catchError((error: AxiosError) => {
+            this.logger.error(error.response.data);
+            throw 'An error happened!';
+          }),
+        ),
+      );
+
+      console.log(res.data);
+
+      if (!res.data.res) {
+        throw new Error();
+      }
+
+      return res.data;
+    } catch (err) {
+      this.logger.error(err);
+
+      throw new InternalServerErrorException('something wrong..');
     }
   }
 

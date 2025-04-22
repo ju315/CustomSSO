@@ -15,7 +15,11 @@ export class UserController {
   }
 
   @Post('sign-out')
-  async userSignOut(@Body() data: any) {}
+  async userSignOut(@Body() data: { sid: string }) {
+    const res = await this.userService.userSignOut(data.sid);
+
+    return { res };
+  }
 
   @Post('check-session')
   async checkUserSession(@Body() data: { sid: string }) {

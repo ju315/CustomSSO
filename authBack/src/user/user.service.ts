@@ -1,4 +1,9 @@
-import { ForbiddenException, HttpException, Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  HttpException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -114,6 +119,33 @@ export class UserService {
 
     return webSession;
   }
+
+  async userSignOut(sid: string) {
+    try {
+      const webSession = await this.webSession.findOne({
+        where: { sessionId: sid },
+        relations: ['sign_session'],
+      });
+
+      if (webSession.is_sign_in && webSession.sign_session.is_sign_in) {
+        return true;
+      }
+
+      await this.signSession.save({
+        ...webSession.sign_session,
+        is_sign_in: false,
+      });
+      await this.webSession.save({
+        ...webSession,
+        is_sign_in: false,
+      });
+
+      return true;
+    } catch (err) {
+      throw new InternalServerErrorException('run error');
+    }
+  }
+
   // signToken(userData: UserDataType, isRefreshToken: boolean) {
   //   const payload = {
   //     ...userData,

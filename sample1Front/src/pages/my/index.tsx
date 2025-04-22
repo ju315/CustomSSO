@@ -32,11 +32,13 @@ const My = () => {
 
   const onClickSignOut = async () => {
     try {
-      await sampleApi.post(`/${versionPrefix}/user/sign-out`, {
+      const res = await sampleApi.post(`/${versionPrefix}/user/sign-out`, {
         sid: me.sessionId,
       });
 
-      window.location.href = '/';
+      if (res.data.res) {
+        window.location.href = '/';
+      }
     } catch (err) {
       console.error(err);
     }
