@@ -7,16 +7,17 @@ const CookieCheck = () => {
   const [query] = useSearchParams();
 
   useEffect(() => {
+    const r = query.get('r') as string;
     const user = getCookie('user');
     const sid = getCookie('TEST.sid');
 
     if (!user || !sid) {
-      const r = query.get('r') as string;
-      console.log(r);
-
       navigator(`/sign-in?r=${encodeURIComponent(r)}`);
+      return;
     }
-  }, [query]);
+
+    window.location.href = `${r}?u=${encodeURIComponent(JSON.stringify(user))}`;
+  }, [query, navigator]);
 
   return (
     <div>

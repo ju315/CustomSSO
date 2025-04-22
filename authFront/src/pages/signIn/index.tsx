@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
 import './SignIn.css';
 import { authApi } from '../../common/axios';
@@ -9,12 +10,11 @@ interface SignData {
 }
 
 const SignIn = () => {
+  const [query] = useSearchParams();
   const [signData, setSignData] = useState<SignData>({
     userId: '',
     password: '',
   });
-
-  useEffect(() => {}, []);
 
   const onClickSignInBtn = async () => {
     try {
@@ -22,7 +22,15 @@ const SignIn = () => {
         ...signData,
         signType: 'SSO',
       });
-    } catch (err) {}
+
+      const r = query.get('r');
+      window.location.href = `${r}?u=${encodeURIComponent(
+        JSON.stringify(res.data),
+      )}`;
+    } catch (err) {
+      console.error(err);
+      window.alert('error!');
+    }
   };
 
   return (
