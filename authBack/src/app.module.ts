@@ -1,11 +1,14 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { join } from 'path';
+
 import { UserModule } from './user/user.module';
 import { LoggerMiddleware } from './logger.middleware';
 import { ViewModule } from './view/view.module';
-import { ServeStaticModule } from '@nestjs/serve-static';
-import { join } from 'path';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { SignHistoryModel } from './common/entity/signIn.entity';
+import { SignHistoryModel } from './common/entity/signInHistory.entity';
+import { SignInSessionModel } from './common/entity/signInSession.entity';
+import { WebSignInSessionModel } from './common/entity/webSession.entity';
 
 @Module({
   imports: [
@@ -19,7 +22,7 @@ import { SignHistoryModel } from './common/entity/signIn.entity';
       username: 'postgres',
       password: 'postgres',
       database: 'sso-test',
-      entities: [SignHistoryModel],
+      entities: [SignHistoryModel, SignInSessionModel, WebSignInSessionModel],
       synchronize: true,
     }),
     UserModule,
