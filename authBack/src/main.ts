@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { VersioningType } from '@nestjs/common';
 import { join } from 'path';
+import * as cookieParser from 'cookie-parser';
 
 import { AppModule } from './app.module';
 
@@ -9,9 +10,10 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   app.enableCors({
-    origin: '*',
+    origin: true,
     methods: 'GET, HEAD, PUT, PATCH, POST, DELETE',
     allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
   });
 
   app.setGlobalPrefix('api');
@@ -20,6 +22,7 @@ async function bootstrap() {
   });
 
   app.useBodyParser('json');
+  app.use(cookieParser());
   app.setBaseViewsDir(join(__dirname, '..', 'views'));
   app.useStaticAssets(join(__dirname, '..', 'public'));
 

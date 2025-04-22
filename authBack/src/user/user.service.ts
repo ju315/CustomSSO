@@ -1,10 +1,8 @@
 import {
-  ForbiddenException,
   HttpException,
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as uuid from 'uuid';
@@ -18,11 +16,6 @@ import {
   SignInSessionModel,
 } from 'src/common/entity/signInSession.entity';
 import { WebSignInSessionModel } from 'src/common/entity/webSession.entity';
-import { SIGN_IN_DATA } from 'src/common/type';
-
-interface SessionUserDataType extends UserDataType {
-  uuid?: string;
-}
 
 @Injectable()
 export class UserService {
@@ -38,63 +31,86 @@ export class UserService {
     //
   }
 
-  async userSignIn(userDto: SignInDto) {
-    const user = this.userRepository.findUser(userDto);
-    console.log(user);
+  async userSignIn(signInDto: SignInDto) {
+    const user = this.userRepository.findUser(signInDto);
 
     if (!user) {
       throw new HttpException('User is not exist!', 404);
     }
 
-    if (userDto.signType === SIGN_IN_DATA.SYSTEM) {
-      const res = await this.signInNormalType(userDto, user);
+    const res = await this.saveSignInData(signInDto, user);
 
-      return res;
-    }
-
-    return true;
-    // return this.loginUser(user);
+    return res;
   }
 
-  async signInNormalType(userDto: SignInDto, user: UserDataType) {
-    const signHistory = await this.signInHistory.save({
-      is_success: true,
-      log_msg: 'sign in success.',
-      server_ip: '192.168.62.13',
-      client_ip: '192.168.62.13',
-    });
+  async saveSignHistory(isSuccess: boolean) {
+    try {
+      const signHistoryData = await this.signInHistory.save({
+        is_success: isSuccess,
+        log_msg: isSuccess ? 'sign in success.' : 'sing in failed.',
+        server_ip: '192.168.62.13',
+        client_ip: '192.168.62.13',
+      });
 
-    console.log(signHistory);
+      console.log('signHistoryData::', signHistoryData);
 
-    const signSession = await this.signSession.save({
-      is_sign_in: true,
-      type: SIGN_TYPE.NORMAL,
-      client_ip: '192.168.62.13',
-      sessionId: uuid.v4(),
-      user_id: user.id,
-      sign_history: signHistory,
-    });
+      return signHistoryData;
+    } catch (err) {
+      throw new InternalServerErrorException('something wrong...');
+    }
+  }
 
-    console.log(signSession);
+  async saveSignInSession(user, signHistory, type: SIGN_TYPE) {
+    try {
+      const signSessionData = await this.signSession.save({
+        is_sign_in: true,
+        type,
+        client_ip: '192.168.62.13',
+        sessionId: uuid.v4(),
+        user_id: user.id,
+        sign_history: signHistory,
+      });
+      console.log('signSessionData::', signSessionData);
 
-    const webSession = await this.webSession.save({
-      is_sign_in: true,
-      sign_session: signSession,
-      server_ip: '192.168.62.13',
-      sessionId: uuid.v4(),
-    });
+      return signSessionData;
+    } catch (err) {
+      throw new InternalServerErrorException('something wrong...');
+    }
+  }
 
-    console.log(webSession);
+  async saveWebSession(signSessionData) {
+    try {
+      const webSessionData = await this.webSession.save({
+        is_sign_in: true,
+        sign_session: signSessionData,
+        server_ip: '192.168.62.13',
+        sessionId: uuid.v4(),
+      });
+
+      console.log('webSessionData::', webSessionData);
+
+      return webSessionData;
+    } catch (err) {
+      throw new InternalServerErrorException('something wrong...');
+    }
+  }
+
+  async saveSignInData(signInDto: SignInDto, user: UserDataType) {
+    const signHistoryData = await this.saveSignHistory(true);
+    const signSessionData = await this.saveSignInSession(
+      user,
+      signHistoryData,
+      signInDto.signType,
+    );
+    const webSessionData = await this.saveWebSession(signSessionData);
 
     return {
       ...user,
-      signSessionId: signSession.sessionId,
-      webSignSessionId: webSession.sessionId,
-      signType: userDto.signType,
+      signSessionId: signSessionData.sessionId,
+      webSignSessionId: webSessionData.sessionId,
+      signType: signInDto.signType,
     };
   }
-
-  signInSSOType(userDto: SignInDto) {}
 
   async checkUserSession(sid: string) {
     const webSession = await this.webSession.findOne({

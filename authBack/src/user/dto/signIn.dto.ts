@@ -1,4 +1,5 @@
 import { IsOptional, IsString } from 'class-validator';
+import { SIGN_TYPE } from 'src/common/entity/signInSession.entity';
 
 export class SignInDto {
   @IsString()
@@ -8,7 +9,7 @@ export class SignInDto {
   password: string;
 
   @IsString()
-  signType: string;
+  signType: SIGN_TYPE;
 
   @IsString()
   @IsOptional()

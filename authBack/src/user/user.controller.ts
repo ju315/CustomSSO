@@ -1,17 +1,27 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, Res } from '@nestjs/common';
+import { Response } from 'express';
 
 import { UserService } from './user.service';
 import { SignInDto } from './dto/signIn.dto';
+import { SIGN_TYPE } from 'src/common/entity/signInSession.entity';
+import { SESSION_COOKIE_NAME, USER_COOKIE_NAME } from 'src/common/const';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post('sign-in')
-  async userSignIn(@Body() data: SignInDto) {
-    const res = await this.userService.userSignIn(data);
+  async userSignIn(@Body() data: SignInDto, @Res() res: Response) {
+    const result = await this.userService.userSignIn(data);
 
-    return res;
+    if (data.signType === SIGN_TYPE.SSO) {
+      res.cookie(SESSION_COOKIE_NAME, result.signSessionId);
+      res.cookie(USER_COOKIE_NAME, JSON.stringify(result));
+
+      return res.status(200).send(result);
+    }
+
+    return res.status(200).send(result);
   }
 
   @Post('sign-out')
