@@ -143,7 +143,7 @@ export class UserService {
         relations: ['sign_session'],
       });
 
-      if (webSession.is_sign_in && webSession.sign_session.is_sign_in) {
+      if (!webSession.is_sign_in && !webSession.sign_session.is_sign_in) {
         return true;
       }
 
